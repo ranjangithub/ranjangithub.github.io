@@ -658,7 +658,7 @@
 
   <!-- ── SLIDE 12: CLOSING ─────────────────────────── -->
   <div class="slide s-cta" id="slide-12">
-    <div class="slide-num">12 / 13</div>
+    <div class="slide-num">12 / 17</div>
     <span class="slide-tag" style="color:#a5b4fc;">The Proposal</span>
     <h2>BDD told agents <em>what</em> to build.<br/>Spec Lite tells them <em>exactly how</em>.</h2>
     <p class="sub">The requirement-to-code promise leadership believes in is achievable. But it requires the layer between behavior and code that nobody formalized yet. That's Spec Lite.</p>
@@ -744,7 +744,7 @@
 
   <!-- ── SLIDE 14: WHY PICKLE? ─────────────────────── -->
   <div class="slide s-dark" id="slide-14" style="justify-content:center;align-items:center;text-align:center;padding:48px 40px 100px;">
-    <div class="slide-num">14 / 14</div>
+    <div class="slide-num">14 / 17</div>
     <span class="slide-tag" style="color:#a5b4fc;">One More Thing</span>
     <h2 style="font-size:clamp(24px,3.5vw,42px);font-weight:900;margin-bottom:10px;">What should we call this initiative?</h2>
     <p style="color:rgba(255,255,255,0.6);font-size:16px;margin-bottom:52px;">A short etymology lesson from the vegetable kingdom</p>
@@ -766,18 +766,255 @@
     </div>
   </div>
 
+  <!-- ── SLIDE 15: DEEPWIKI PROBLEM ───────────────── -->
+  <div class="slide s-dark" id="slide-15" style="padding:52px 64px 100px;">
+    <div class="slide-num">15 / 17</div>
+    <span class="slide-tag" style="color:#f87171;">The Next Problem</span>
+    <h2 style="font-size:clamp(22px,3vw,38px);font-weight:900;margin-bottom:10px;">400 Microservices. Every Agent Session Starts Cold.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:16px;margin-bottom:36px;">Two new applications. 200 microservices each. Orchestration, dependencies, domain logic. And every time a developer opens an agent session — it knows nothing.</p>
+
+    <!-- Two-column problem split -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;">
+
+      <!-- RAG tax -->
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:24px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#f87171;margin-bottom:14px;">The RAG Tax (current approach)</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.7);">
+            <span style="color:#f87171;flex-shrink:0;margin-top:2px;">✗</span>
+            Developer pastes service readme + architecture docs into every prompt
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.7);">
+            <span style="color:#f87171;flex-shrink:0;margin-top:2px;">✗</span>
+            RAG retrieves chunks — loses structure, misses relationships
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.7);">
+            <span style="color:#f87171;flex-shrink:0;margin-top:2px;">✗</span>
+            Knowledge is re-derived from scratch on every query
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.7);">
+            <span style="color:#f87171;flex-shrink:0;margin-top:2px;">✗</span>
+            Tribe knowledge lives in people's heads — leaves when they do
+          </div>
+        </div>
+      </div>
+
+      <!-- The real cost -->
+      <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:14px;padding:24px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fbbf24;margin-bottom:14px;">What this costs at scale</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="text-align:center;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;">
+            <div style="font-size:32px;font-weight:900;color:#fbbf24;">400</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">microservices, zero shared memory</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;">
+            <div style="font-size:32px;font-weight:900;color:#fbbf24;">~45 min</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">per dev per day re-explaining context to agents</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;">
+            <div style="font-size:32px;font-weight:900;color:#fbbf24;">0%</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">of tribal knowledge captured as services are written</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karpathy quote -->
+    <div style="background:rgba(99,102,241,0.12);border-left:4px solid #6366f1;border-radius:0 10px 10px 0;padding:16px 22px;">
+      <p style="font-size:15px;color:rgba(255,255,255,0.85);line-height:1.7;font-style:italic;">
+        "Your files are raw ingredients. The LLM Wiki is the cooked meal. With RAG, you cook every time you are hungry."
+      </p>
+      <p style="font-size:12px;color:#a5b4fc;margin-top:6px;font-style:normal;">— Andrej Karpathy, LLM Wiki (April 2026)</p>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 16: DEEPWIKI ARCHITECTURE ───────────── -->
+  <div class="slide s-content" id="slide-16" style="padding:44px 64px 100px;">
+    <div class="slide-num" style="color:rgba(0,0,0,0.2);">16 / 17</div>
+    <span class="slide-tag" style="color:#6366f1;">The Proposal</span>
+    <h2 style="font-size:clamp(22px,3vw,36px);font-weight:900;margin-bottom:8px;color:#0f0c29;">Hierarchical Deepwiki — Knowledge That Lives Where Code Lives</h2>
+    <p style="color:#64748b;font-size:15px;margin-bottom:32px;">Markdown-based, in-repo, auto-updated on every commit. Agent reads the right slice. Not everything.</p>
+
+    <!-- Hierarchy diagram -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:32px;overflow-x:auto;">
+
+      <!-- Level 1: Org -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;">
+        <div style="background:#0f0c29;color:#fff;border-radius:10px;padding:12px 16px;text-align:center;font-size:13px;font-weight:700;width:110px;">
+          <div style="font-size:20px;margin-bottom:4px;">🏢</div>
+          Org Wiki
+          <div style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.5);margin-top:4px;">ORG.md</div>
+        </div>
+        <div style="font-size:10px;color:#94a3b8;text-align:center;">auto-aggregated</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-bottom:20px;">
+        <div style="color:#c7d2fe;font-size:18px;">←</div>
+      </div>
+
+      <!-- Level 2: App -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:#1e1b4b;color:#c7d2fe;border-radius:10px;padding:10px 14px;text-align:center;font-size:12px;font-weight:700;width:110px;">
+          <div style="font-size:16px;margin-bottom:3px;">📦</div>
+          App 1 Wiki
+          <div style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-top:3px;">APP1.md</div>
+        </div>
+        <div style="background:#1e1b4b;color:#c7d2fe;border-radius:10px;padding:10px 14px;text-align:center;font-size:12px;font-weight:700;width:110px;">
+          <div style="font-size:16px;margin-bottom:3px;">📦</div>
+          App 2 Wiki
+          <div style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);margin-top:3px;">APP2.md</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-bottom:20px;">
+        <div style="color:#c7d2fe;font-size:18px;">←</div>
+      </div>
+
+      <!-- Level 3: Domain -->
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="background:#312e81;color:#a5b4fc;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;width:100px;">
+          <div style="font-size:14px;margin-bottom:2px;">🗂</div>
+          Payment Domain
+          <div style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.4);">DOMAIN.md</div>
+        </div>
+        <div style="background:#312e81;color:#a5b4fc;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;width:100px;">
+          Auth Domain</div>
+        <div style="background:#312e81;color:#a5b4fc;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;width:100px;">
+          Notification</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-bottom:20px;">
+        <div style="color:#c7d2fe;font-size:18px;">←</div>
+      </div>
+
+      <!-- Level 4: Microservice -->
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="background:#4f46e5;color:#fff;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;width:110px;">
+          <div style="font-size:13px;margin-bottom:2px;">⚙️</div>
+          payment-svc
+          <div style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.6);">WIKI.md ← in repo</div>
+        </div>
+        <div style="background:#4f46e5;color:#fff;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;width:110px;">auth-svc</div>
+        <div style="background:#4f46e5;color:#fff;border-radius:8px;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;width:110px;">notify-svc</div>
+        <div style="background:rgba(79,70,229,0.3);color:#a5b4fc;border-radius:8px;padding:6px 12px;text-align:center;font-size:10px;width:110px;">+ 197 more…</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-bottom:20px;">
+        <div style="color:#6ee7b7;font-size:18px;">←</div>
+      </div>
+
+      <!-- Git trigger -->
+      <div style="background:#064e3b;border:1px solid #34d399;border-radius:10px;padding:12px 14px;text-align:center;min-width:100px;">
+        <div style="font-size:20px;margin-bottom:4px;">⚡</div>
+        <div style="font-size:11px;font-weight:700;color:#6ee7b7;">git commit</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:4px;">triggers wiki<br/>update agent</div>
+      </div>
+
+    </div>
+
+    <!-- Three principles -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <div style="background:#f1f5f9;border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">📍</div>
+        <div style="font-weight:700;font-size:14px;color:#0f0c29;margin-bottom:4px;">In the repo, at the lowest level</div>
+        <div style="font-size:12px;color:#64748b;line-height:1.6;">WIKI.md lives beside the code. Docs and code change together, in the same PR, in the same commit.</div>
+      </div>
+      <div style="background:#f1f5f9;border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">🧠</div>
+        <div style="font-weight:700;font-size:14px;color:#0f0c29;margin-bottom:4px;">Karpathy's context-as-RAM</div>
+        <div style="font-size:12px;color:#64748b;line-height:1.6;">Agent loads payment-svc/WIKI.md directly into context. No retrieval, no chunking, no lost structure.</div>
+      </div>
+      <div style="background:#f1f5f9;border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">📈</div>
+        <div style="font-weight:700;font-size:14px;color:#0f0c29;margin-bottom:4px;">Knowledge compounds</div>
+        <div style="font-size:12px;color:#64748b;line-height:1.6;">Synthesized once, kept current. Cross-service relationships captured as services are written — not rediscovered later.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 17: BUILD vs BUY ────────────────────── -->
+  <div class="slide s-dark" id="slide-17" style="padding:52px 64px 100px;">
+    <div class="slide-num">17 / 17</div>
+    <span class="slide-tag" style="color:#34d399;">Build vs Buy</span>
+    <h2 style="font-size:clamp(22px,3vw,36px);font-weight:900;margin-bottom:10px;">Why Build? Why Now? Why Simple?</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:15px;margin-bottom:32px;">Commercial Deepwiki exists. It's expensive, mature-org-first, and overbuilt for services that are still being written.</p>
+
+    <!-- Build vs Buy table -->
+    <div style="margin-bottom:28px;overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:10px 14px;color:#94a3b8;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.1);"></th>
+            <th style="text-align:center;padding:10px 14px;color:#f87171;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.1);">Commercial Deepwiki</th>
+            <th style="text-align:center;padding:10px 14px;color:#34d399;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.1);">Build (Markdown + Agent)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:10px 14px;color:#94a3b8;">Cost</td>
+            <td style="padding:10px 14px;text-align:center;color:#fca5a5;">$$$  — priced for mature large orgs</td>
+            <td style="padding:10px 14px;text-align:center;color:#6ee7b7;">Agent API calls + CI time</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:10px 14px;color:#94a3b8;">Fit for new services</td>
+            <td style="padding:10px 14px;text-align:center;color:#fca5a5;">Over-engineered — thin content ROI</td>
+            <td style="padding:10px 14px;text-align:center;color:#6ee7b7;">Grows as services grow</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:10px 14px;color:#94a3b8;">Lock-in risk</td>
+            <td style="padding:10px 14px;text-align:center;color:#fca5a5;">High — proprietary format</td>
+            <td style="padding:10px 14px;text-align:center;color:#6ee7b7;">Zero — plain markdown, any tool reads it</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:10px 14px;color:#94a3b8;">Replaceability</td>
+            <td style="padding:10px 14px;text-align:center;color:#fca5a5;">Migration project</td>
+            <td style="padding:10px 14px;text-align:center;color:#6ee7b7;">Swap the agent, keep the markdown</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;color:#94a3b8;">Agent access</td>
+            <td style="padding:10px 14px;text-align:center;color:#fca5a5;">API / RAG — retrieval required</td>
+            <td style="padding:10px 14px;text-align:center;color:#6ee7b7;">Direct file read into context window</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Three reasons -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">
+      <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:12px;padding:16px;">
+        <div style="font-size:13px;font-weight:700;color:#34d399;margin-bottom:6px;">Logseq Insight</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">Graph-based, bidirectional links, local-first, markdown files. Org Deepwiki borrows the same mental model — knowledge as a connected graph, not a document store.</div>
+      </div>
+      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:12px;padding:16px;">
+        <div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:6px;">Karpathy's LLM Wiki (2026)</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">Skip the vector DB. Pre-compile knowledge into structured markdown. LLM reads it directly. Synthesis is done once — not re-derived every query.</div>
+      </div>
+      <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:16px;">
+        <div style="font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:6px;">Gen AI is maturing fast</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">The wiki maintainer agent improves automatically. Markdown content survives every model upgrade. Start simple — the tooling catches up to you.</div>
+      </div>
+    </div>
+
+    <!-- Bottom line -->
+    <div style="background:rgba(52,211,153,0.1);border-left:4px solid #34d399;border-radius:0 10px 10px 0;padding:14px 20px;">
+      <p style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.65;">
+        <strong style="color:#34d399;">The bet:</strong> Services are being written now. Every service written without a WIKI.md is tribal knowledge that will cost 10× to recover later. The right time to start a knowledge base is before the knowledge exists — not after.
+      </p>
+    </div>
+  </div>
+
 </div><!-- /deck -->
 
 <!-- Navigation -->
 <div class="nav">
   <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>←</button>
   <div class="dots" id="dots"></div>
-  <span class="slide-counter" id="counter">1 / 14</span>
+  <span class="slide-counter" id="counter">1 / 17</span>
   <button class="nav-btn" id="next-btn" onclick="navigate(1)">→</button>
 </div>
 
 <script>
-  const TOTAL = 14;
+  const TOTAL = 17;
   let current = 1;
   let prev = null;
 
