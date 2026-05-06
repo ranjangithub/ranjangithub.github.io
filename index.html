@@ -321,10 +321,13 @@
     <div class="newsletter">
       <h2>Get the next tutorial in your inbox</h2>
       <p>New guides on Claude Code, gstack, AI, and blockchain — no fluff, just what works.</p>
-      <div class="nl-form">
-        <input class="nl-input" type="email" placeholder="your@email.com" />
-        <button class="nl-btn">Subscribe</button>
-      </div>
+      <form class="nl-form" action="https://formsubmit.co/ranjanemail@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="New subscriber — ranjanemail.github.io" />
+        <input type="hidden" name="_next" value="https://ranjangithub.github.io/ranjanemail.github.io/?subscribed=1" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input class="nl-input" type="email" name="email" placeholder="your@email.com" required />
+        <button class="nl-btn" type="submit">Subscribe</button>
+      </form>
     </div>
 
   </div>

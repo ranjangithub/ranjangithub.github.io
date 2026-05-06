@@ -67,10 +67,13 @@
         </div>
       </div>
       <p style="font-size:14px;color:#64748b;">Get notified when this publishes:</p>
-      <div class="nl-form">
-        <input class="nl-input" type="email" placeholder="your@email.com" />
-        <button class="nl-btn">Notify me</button>
-      </div>
+      <form class="nl-form" action="https://formsubmit.co/ranjanemail@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Notify me: /investigate tutorial" />
+        <input type="hidden" name="_next" value="https://ranjangithub.github.io/ranjanemail.github.io/investigate-tutorial/?subscribed=1" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input class="nl-input" type="email" name="email" placeholder="your@email.com" required />
+        <button class="nl-btn" type="submit">Notify me</button>
+      </form>
       <div class="back-links">
         <a class="back-link" href="/gstack-founder-story/">← Start with the founder story</a>
         <a class="back-link" href="/gstack-skill-reference/">Browse all 23 skills →</a>
