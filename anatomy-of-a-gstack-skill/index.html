@@ -197,6 +197,11 @@
     <strong>gstack</strong> is an opinionated convention on top of that. Garry Tan designed the 5-layer structure so that all 23 skills share a consistent architecture — auto-generated preambles, shared voice directives, standardized telemetry. When you install gstack you get the full structure. When you write your own skill from scratch, you only need as many layers as your skill actually requires.</p>
   </div>
 
+  <div class="callout danger">
+    <div class="callout-label">Author's note — not official gstack terminology</div>
+    <p>The "5-layer" framing is this author's synthesis from reading the actual SKILL.md source files. Garry Tan does not use this label anywhere. What he documents is the <em>behaviour</em> each section produces — in ETHOS.md, CONTRIBUTING.md, and inline comments in the templates. The 5-layer model is a pedagogical frame to make the structure teachable, not a term you'll find in the gstack repo.</p>
+  </div>
+
   <p>With that clear — here's the full 5-layer structure that every gstack skill follows:</p>
 
   <div class="layer-map">
@@ -638,6 +643,113 @@ Under 5 lines. One sentence per bullet.</pre>
   </div>
 
   <hr class="divider" />
+
+  <hr class="divider" />
+
+  <!-- Garry's thought process -->
+  <h2>Garry's design philosophy — in his own words</h2>
+  <p>The 5-layer structure isn't arbitrary. Each layer reflects a principle from Garry's ETHOS.md — a document injected into every gstack skill's preamble automatically. Here's where the design decisions in <code>/ship</code> trace back to.</p>
+
+  <h3>On why /ship does the complete thing — "Boil the Lake"</h3>
+  <p>The stop/never-stop design — and the fact that /ship auto-generates the CHANGELOG, auto-writes the PR description, auto-runs tests — comes directly from this principle:</p>
+
+  <div class="callout quote">
+    <div class="callout-label">Garry Tan — ETHOS.md</div>
+    <blockquote>"AI-assisted coding makes the marginal cost of completeness near-zero. When the complete implementation costs minutes more than the shortcut — do the complete thing. Every time... 'Ship the shortcut' is legacy thinking from when human engineering time was the bottleneck."</blockquote>
+  </div>
+
+  <p>The "never stop for" list in /ship is a direct application of this. Asking you to approve a commit message or write a CHANGELOG entry manually would be making you do work that has near-zero marginal cost for AI. gstack treats that as a design failure, not a feature.</p>
+
+  <h3>On why /ship stops when it does — "User Sovereignty"</h3>
+  <p>The skill stops for MINOR/MAJOR version bumps, merge conflicts, and review findings that need judgment. Not because stopping is conservative — because those are the moments where the user has context the model doesn't.</p>
+
+  <div class="callout quote">
+    <div class="callout-label">Garry Tan — ETHOS.md</div>
+    <blockquote>"Two AI models agreeing on a change is a strong signal. It is not a mandate. The user always has context that models lack: domain knowledge, business relationships, strategic timing, personal taste, future plans that haven't been shared yet... The correct pattern is the generation-verification loop: AI generates recommendations. The user verifies and decides. The AI never skips the verification step because it's confident."</blockquote>
+  </div>
+
+  <p>Garry cites Andrej Karpathy's "Iron Man suit" philosophy here: great AI products augment the user, not replace them. /ship's stop list is the Iron Man suit's ejector seat — the moments where Claude steps back and hands the controls to you.</p>
+
+  <h3>On why the preamble searches before acting — "Search Before Building"</h3>
+  <p>The preamble detects your platform (GitHub vs GitLab), your test framework, your runtime — before running a single step. This is Garry's three-layer knowledge model applied to runtime behavior:</p>
+
+  <div class="callout quote">
+    <div class="callout-label">Garry Tan — ETHOS.md</div>
+    <blockquote>"The 1000x engineer's first instinct is 'has someone already solved this?' not 'let me design it from scratch.' Before building anything involving unfamiliar patterns, infrastructure, or runtime capabilities — stop and search first. The cost of checking is near-zero. The cost of not checking is reinventing something worse."</blockquote>
+  </div>
+
+  <p>Step 4 (Test Framework Bootstrap) applies this directly — it runs <code>WebSearch</code> to find current best practices for your runtime before recommending a test framework. It doesn't assume Vitest is correct for your Next.js app in 2026; it checks.</p>
+
+  <h3>On why gstack exists at all — "Build for Yourself"</h3>
+
+  <div class="callout quote">
+    <div class="callout-label">Garry Tan — ETHOS.md</div>
+    <blockquote>"The best tools solve your own problem. gstack exists because its creator wanted it. Every feature was built because it was needed, not because it was requested. If you're building something for yourself, trust that instinct. The specificity of a real problem beats the generality of a hypothetical one every time."</blockquote>
+  </div>
+
+  <p>gstack started as Garry's personal Claude Code setup. The 23 skills are the workflows he actually runs at YC — advising founders, reviewing products, shipping his own code. That's why they feel specific rather than generic.</p>
+
+  <hr class="divider" />
+
+  <!-- References -->
+  <h2>References</h2>
+
+  <div style="background:#fff;border:1px solid #e0e7ff;border-radius:12px;overflow:hidden;margin:28px 0;">
+    <div style="background:#0f0c29;padding:12px 20px;">
+      <span style="font-size:12px;font-weight:700;color:#a5b4fc;letter-spacing:1px;text-transform:uppercase;">Primary Sources</span>
+    </div>
+
+    <div style="padding:0 20px;">
+      <div style="padding:18px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">gstack ETHOS.md — Garry Tan's builder philosophy</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:6px;">The document injected into every gstack skill's preamble. Covers Boil the Lake, Search Before Building, User Sovereignty, and Build for Yourself. The closest thing to a design document for why gstack works the way it does.</div>
+        <code style="font-size:12px;">~/.claude/skills/gstack/ETHOS.md</code>
+        <span style="font-size:12px;color:#94a3b8;margin-left:12px;">· Local file after gstack install</span>
+      </div>
+
+      <div style="padding:18px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">Boil the Ocean — garryslist.org</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:6px;">Garry's essay on why completeness is cheap in the AI era and why "ship the shortcut" is legacy thinking. The essay that the Boil the Lake principle in gstack is named after.</div>
+        <a href="https://garryslist.org/posts/boil-the-ocean" style="font-size:13px;color:#4f46e5;font-weight:600;" target="_blank">garryslist.org/posts/boil-the-ocean →</a>
+      </div>
+
+      <div style="padding:18px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">gstack CONTRIBUTING.md — how SKILL.md files are generated</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:6px;">Documents the SKILL.md.tmpl → gen-skill-docs.ts → SKILL.md pipeline. Explains how the preamble and global directives are auto-injected into every skill, and the rules for writing new templates.</div>
+        <code style="font-size:12px;">~/.claude/skills/gstack/CONTRIBUTING.md</code>
+        <span style="font-size:12px;color:#94a3b8;margin-left:12px;">· Local file after gstack install</span>
+      </div>
+
+      <div style="padding:18px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">/ship SKILL.md — the source file this tutorial is based on</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:6px;">The actual /ship skill. Every code block in this tutorial comes from this file. Read it to see the full 20-step workflow, the stop/never-stop declaration, and how the preamble and telemetry blocks look in production.</div>
+        <code style="font-size:12px;">~/.claude/skills/ship/SKILL.md</code>
+        <span style="font-size:12px;color:#94a3b8;margin-left:12px;">· Local file after gstack install</span>
+      </div>
+
+      <div style="padding:18px 0;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">gstack GitHub repository</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:6px;">The full source for all 23 skills, the browse binary, the gen-skill-docs pipeline, and the bin utilities. The SKILL.md.tmpl files are the canonical source of truth — SKILL.md files are generated from them.</div>
+        <a href="https://github.com/garrytan/gstack" style="font-size:13px;color:#4f46e5;font-weight:600;" target="_blank">github.com/garrytan/gstack →</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e0e7ff;border-radius:12px;overflow:hidden;margin:20px 0 40px;">
+    <div style="background:#0f0c29;padding:12px 20px;">
+      <span style="font-size:12px;font-weight:700;color:#a5b4fc;letter-spacing:1px;text-transform:uppercase;">Referenced Thinkers</span>
+    </div>
+    <div style="padding:0 20px;">
+      <div style="padding:18px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">Andrej Karpathy — "Iron Man suit" philosophy</div>
+        <div style="font-size:13px;color:#64748b;">Great AI products augment the user, not replace them. The human stays at the center. Cited in ETHOS.md as the foundation for gstack's User Sovereignty principle — why /ship stops when it does.</div>
+      </div>
+      <div style="padding:18px 0;">
+        <div style="font-weight:700;font-size:15px;color:#0f0c29;margin-bottom:4px;">Simon Willison — "agents are merchants of complexity"</div>
+        <div style="font-size:13px;color:#64748b;">When humans remove themselves from the loop, they don't know what's happening. Also cited in ETHOS.md as a counterweight to over-automation — the reason gstack uses explicit stop conditions rather than fully autonomous operation.</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Author -->
   <div class="author-box">
