@@ -168,11 +168,12 @@
   <div class="tldr">
     <div class="tldr-label">TL;DR</div>
     <ul>
-      <li>A SKILL.md file has 5 layers: frontmatter, preamble, global directives, workflow steps, and telemetry.</li>
+      <li><strong>Claude Code</strong> only requires one thing: a Markdown file at <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>. The structure inside is entirely up to you.</li>
+      <li><strong>gstack</strong> adds a 5-layer convention on top of that: frontmatter, preamble, global directives, workflow steps, and telemetry. You don't need all 5 — gstack uses them because it's building production-grade, maintainable skills at scale.</li>
       <li>The frontmatter is how Claude decides when to invoke the skill automatically — without you typing /ship.</li>
       <li>The preamble is a bash script that runs first, giving Claude a read on your environment before it does anything.</li>
       <li>/ship's most important design decision: an explicit list of what stops it vs what it auto-handles. That list is why 32 minutes became 11.</li>
-      <li>Once you understand the structure, writing your own skill takes 30 minutes.</li>
+      <li>Once you understand the structure, writing your own skill takes 30 minutes — and you only need as many layers as your skill actually requires.</li>
     </ul>
   </div>
 
@@ -187,8 +188,16 @@
   </div>
 
   <!-- The 5 layers -->
-  <h2>The 5 layers of a SKILL.md file</h2>
-  <p>Open any SKILL.md and you'll find the same structure, top to bottom:</p>
+  <h2>The 5 layers of a gstack SKILL.md</h2>
+  <p>Before we go further — an important distinction:</p>
+
+  <div class="callout insight">
+    <div class="callout-label">Claude Code vs gstack — what owns what</div>
+    <p><strong>Claude Code (the CLI)</strong> has one requirement for a skill: a Markdown file at <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>. That's it. The content can be two lines of plain English. Claude reads the file as instructions and follows them.<br/><br/>
+    <strong>gstack</strong> is an opinionated convention on top of that. Garry Tan designed the 5-layer structure so that all 23 skills share a consistent architecture — auto-generated preambles, shared voice directives, standardized telemetry. When you install gstack you get the full structure. When you write your own skill from scratch, you only need as many layers as your skill actually requires.</p>
+  </div>
+
+  <p>With that clear — here's the full 5-layer structure that every gstack skill follows:</p>
 
   <div class="layer-map">
     <div class="layer-row">
@@ -549,51 +558,83 @@ fi</pre>
 
   <!-- Write your own -->
   <h2>Write your own skill in 30 minutes</h2>
-  <p>Now that you know the 5 layers, writing a custom skill is straightforward. Say you want a <code>/standup</code> skill that reads your git log and writes a daily standup update:</p>
+
+  <p>Here's where the Claude Code vs gstack distinction becomes practical. You have two paths:</p>
+
+  <h3>Path A — Pure Claude Code (2 minutes, zero setup)</h3>
+  <p>The smallest possible skill. No frontmatter, no preamble, no gstack required. Just instructions Claude follows.</p>
 
   <div class="code-block">
     <div class="code-block-header">
-      <span class="code-block-title">~/.claude/skills/standup/SKILL.md — minimal custom skill</span>
+      <span class="code-block-title">~/.claude/skills/standup/SKILL.md — pure Claude Code skill</span>
       <span class="copy-btn" onclick="copyCode(this)">Copy</span>
     </div>
-    <pre>---
+    <pre><span class="cm"># /standup</span>
+
+Run this bash:
+```bash
+git log --since="24 hours ago" --oneline --author="$(git config user.name)"
+```
+
+Then write a standup in exactly this format:
+
+<span class="st">**Yesterday:**</span> [completed work from commits]
+<span class="st">**Today:**</span>     [what's in progress or next]
+<span class="st">**Blockers:**</span>  [anything blocked, or "none"]
+
+Under 5 lines. One sentence per bullet. Talk like a builder, not a reporter.</pre>
+  </div>
+
+  <p>Save it to <code>~/.claude/skills/standup/SKILL.md</code>. Type <code>/standup</code> in Claude Code. Done. This is a fully working skill — no gstack needed.</p>
+
+  <div class="callout insight">
+    <div class="callout-label">When pure Claude Code is enough</div>
+    <p>For personal productivity skills — standup, summarize my day, review this file — the minimal approach is perfect. Claude Code is just reading your instructions. The simpler the instructions, the more reliably Claude follows them.</p>
+  </div>
+
+  <h3>Path B — gstack-style (30 minutes, production-ready)</h3>
+  <p>When your skill needs to be robust — detecting environments, handling edge cases, being used by a team — add the gstack layers that actually matter for your use case. You don't need all 5. Pick what serves your skill.</p>
+
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="code-block-title">~/.claude/skills/standup/SKILL.md — gstack-style skill</span>
+      <span class="copy-btn" onclick="copyCode(this)">Copy</span>
+    </div>
+    <pre><span class="cm">---                                    ← Layer 1: frontmatter</span>
 <span class="hl">name: standup</span>
 description: |
-  Writes a daily standup update from recent git activity.
-  Use when asked to "write standup", "what did I do today",
-  or "generate standup".
-allowed-tools:
-  - Bash
-  - Read
+  Writes daily standup from git activity.
+  Use when asked to "write standup" or
+  "what did I do today".
+allowed-tools: [Bash, Read]
 triggers:
   - write standup
   - what did I do today
 ---
 
-<span class="cm">## Step 1: Read recent git activity</span>
-
+<span class="cm">## Preamble                             ← Layer 2: only if you need it</span>
 ```bash
-git log --since="24 hours ago" --oneline --author="$(git config user.name)"
-git diff HEAD~5..HEAD --stat
+_BRANCH=$(git branch --show-current)
+_AUTHOR=$(git config user.name)
+echo "BRANCH: $_BRANCH | AUTHOR: $_AUTHOR"
 ```
 
-<span class="cm">## Step 2: Write standup in 3-bullet format</span>
+<span class="cm">## Only stop for:                       ← Layer 3: stop conditions</span>
+<span class="cm">## - No commits in the last 24 hours</span>
 
-Format:
+<span class="cm">## Step 1: Read activity</span>             <span class="cm">← Layer 4: workflow</span>
+```bash
+git log --since="24 hours ago" --oneline --author="$_AUTHOR"
+```
 
-<span class="st">**Yesterday:**</span> [what was completed — pull from commits]
-<span class="st">**Today:**</span>     [what's in progress or next — pull from open diff]
-<span class="st">**Blockers:**</span>  [anything blocked — none if git log looks clean]
-
-Keep it under 5 lines. Write like you're talking to your team,
-not writing a report. No bullet points longer than one sentence.</pre>
+<span class="cm">## Step 2: Write standup</span>
+Format: Yesterday / Today / Blockers.
+Under 5 lines. One sentence per bullet.</pre>
   </div>
 
-  <p>Save it to <code>~/.claude/skills/standup/SKILL.md</code>. Open Claude Code. Type <code>/standup</code>. Done.</p>
-
   <div class="callout success">
-    <div class="callout-label">The pattern to follow</div>
-    <p>Every good skill answers three questions in its workflow steps: <strong>(1) What do I read first?</strong> (preamble + Step 0), <strong>(2) What are the explicit stop conditions?</strong> (the "only stop for" list), and <strong>(3) What's the exact output format?</strong> Nail these three and the skill works reliably.</p>
+    <div class="callout-label">The rule: add layers when they earn their complexity</div>
+    <p>Frontmatter earns its place when you want Claude to invoke the skill automatically from natural language. The preamble earns its place when you need environment state before Step 1. Global directives earn their place when multiple people share the skill and need consistent behavior. gstack uses all 5 layers across 23 skills because at that scale, the structure pays off. For one personal skill, it usually doesn't.</p>
   </div>
 
   <hr class="divider" />
