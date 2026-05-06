@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gstack Skill Reference — All 23 Skills and When to Use Each</title>
+  <meta name="description" content="Complete reference for all 23 gstack skills. Organized by phase: Think, Plan, Build, Test, Ship, Operate. Every skill, what it does, when to use it." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.7; color: #1a1a2e; background: #fafafa; }
+    a { color: #4f46e5; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    #progress-bar { position: fixed; top: 0; left: 0; height: 4px; width: 0%; background: linear-gradient(90deg,#4f46e5,#7c3aed); z-index: 9999; transition: width 0.1s linear; }
+
+    .hero { background: linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%); color: #fff; padding: 64px 24px 48px; text-align: center; }
+    .hero-tag { display: inline-block; background: rgba(79,70,229,0.4); color: #a5b4fc; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 18px; border: 1px solid rgba(165,180,252,0.3); }
+    .hero h1 { font-size: clamp(24px,4vw,38px); font-weight: 800; line-height: 1.25; max-width: 680px; margin: 0 auto 16px; }
+    .hero p { color: rgba(255,255,255,0.7); font-size: 16px; max-width: 520px; margin: 0 auto 24px; }
+    .hero-meta { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,0.5); }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    .toc { background: #f0f0ff; border: 1px solid #c7d2fe; border-radius: 12px; padding: 24px 28px; margin-bottom: 48px; }
+    .toc-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #4f46e5; margin-bottom: 14px; }
+    .toc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+    .toc-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #1e1b4b; padding: 6px 10px; border-radius: 8px; transition: background 0.15s; }
+    .toc-item:hover { background: #e0e7ff; text-decoration: none; }
+    .toc-item .phase-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-purple { background: #7c3aed; }
+    .dot-blue   { background: #2563eb; }
+    .dot-green  { background: #16a34a; }
+    .dot-orange { background: #ea580c; }
+    .dot-pink   { background: #db2777; }
+    .dot-teal   { background: #0d9488; }
+    .dot-red    { background: #dc2626; }
+
+    .phase-section { margin-bottom: 52px; }
+    .phase-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #e0e7ff; }
+    .phase-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .phase-icon.purple { background: #ede9fe; }
+    .phase-icon.blue   { background: #dbeafe; }
+    .phase-icon.green  { background: #dcfce7; }
+    .phase-icon.orange { background: #fff7ed; }
+    .phase-icon.pink   { background: #fce7f3; }
+    .phase-icon.teal   { background: #ccfbf1; }
+    .phase-icon.red    { background: #fef2f2; }
+    .phase-title { font-size: 20px; font-weight: 800; color: #0f0c29; }
+    .phase-sub   { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+    .skill-cards { display: flex; flex-direction: column; gap: 14px; }
+    .skill-card { background: #fff; border: 1px solid #e0e7ff; border-radius: 12px; padding: 22px 24px; display: grid; grid-template-columns: 160px 1fr; gap: 20px; align-items: start; }
+    .skill-card:hover { border-color: #a5b4fc; box-shadow: 0 2px 12px rgba(79,70,229,0.08); }
+    .skill-name { font-family: "Menlo","Courier New",monospace; font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 6px; }
+    .skill-when { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; }
+    .skill-desc { font-size: 14px; color: #1e293b; line-height: 1.65; margin-bottom: 10px; }
+    .skill-trigger { font-size: 13px; color: #475569; }
+    .skill-trigger strong { color: #0f0c29; }
+    .skill-example { margin-top: 10px; background: #1e1b2e; border-radius: 8px; padding: 10px 14px; font-family: "Menlo",monospace; font-size: 13px; color: #a5b4fc; }
+
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 40px 0; }
+
+    .nav-bar { background: #fff; border-bottom: 1px solid #e0e7ff; padding: 12px 24px; position: sticky; top: 4px; z-index: 100; }
+    .nav-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .nav-back { font-size: 14px; color: #4f46e5; font-weight: 600; }
+    .nav-title { font-size: 13px; color: #94a3b8; }
+
+    @media (max-width: 600px) {
+      .skill-card { grid-template-columns: 1fr; }
+      .toc-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-back" href="/">← ranjanemail.github.io</a>
+    <span class="nav-title">gstack Skill Reference</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Reference · gstack</div>
+  <h1>The Complete gstack Skill Reference</h1>
+  <p>All 23 skills organized by phase. What each does, when to use it, and the exact command to run.</p>
+  <div class="hero-meta">
+    <span>📦 23 skills</span>
+    <span>🔄 6 phases</span>
+    <span>🆓 All free &amp; open source</span>
+    <span>📅 Updated May 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-label">Jump to phase</div>
+    <div class="toc-grid">
+      <a class="toc-item" href="#think"><span class="phase-dot dot-purple"></span>💡 Think</a>
+      <a class="toc-item" href="#plan"><span class="phase-dot dot-blue"></span>🗺 Plan</a>
+      <a class="toc-item" href="#build"><span class="phase-dot dot-green"></span>🔨 Build</a>
+      <a class="toc-item" href="#test"><span class="phase-dot dot-orange"></span>🧪 Test</a>
+      <a class="toc-item" href="#ship"><span class="phase-dot dot-pink"></span>🚀 Ship</a>
+      <a class="toc-item" href="#operate"><span class="phase-dot dot-teal"></span>🔁 Operate</a>
+      <a class="toc-item" href="#security"><span class="phase-dot dot-red"></span>🔒 Security</a>
+    </div>
+  </div>
+
+  <!-- THINK -->
+  <div class="phase-section" id="think">
+    <div class="phase-header">
+      <div class="phase-icon purple">💡</div>
+      <div>
+        <div class="phase-title">Think</div>
+        <div class="phase-sub">Before you write a line of code — validate the idea, challenge assumptions</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/office-hours</div>
+          <div class="skill-when">Use when: starting a feature</div>
+        </div>
+        <div>
+          <div class="skill-desc">YC-style product session. Interrogates your feature idea with the same questions a good investor or co-founder would ask. Pushes you on evidence, user pain, and whether you're solving the real problem or a problem you invented.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> You're excited about a feature and about to start building. Run this before writing code.</div>
+          <div class="skill-example">/office-hours</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <div class="phase-section" id="plan">
+    <div class="phase-header">
+      <div class="phase-icon blue">🗺</div>
+      <div>
+        <div class="phase-title">Plan</div>
+        <div class="phase-sub">Lock in the design before building — architecture, strategy, scope</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/plan-eng-review</div>
+          <div class="skill-when">Use when: starting a new feature</div>
+        </div>
+        <div>
+          <div class="skill-desc">Architecture review before you build. Reviews your proposed approach, flags risks, suggests alternatives, and locks in the design. Prevents the worst kind of waste: building the right feature the wrong way.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> You know WHAT to build. Run this before deciding HOW to build it.</div>
+          <div class="skill-example">/plan-eng-review</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/plan-ceo-review</div>
+          <div class="skill-when">Use when: setting direction</div>
+        </div>
+        <div>
+          <div class="skill-desc">Product strategy gate. Aligns what you're building with business goals. Surfaces opportunity cost — what you're NOT building while you build this. Good for weekly or sprint-level direction setting.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> You have multiple things you could work on and need to pick the right one.</div>
+          <div class="skill-example">/plan-ceo-review</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/autoplan</div>
+          <div class="skill-when">Use when: big new feature</div>
+        </div>
+        <div>
+          <div class="skill-desc">Runs the full review pipeline automatically: CEO review → design review → eng review → outside voice. One command, all four perspectives. Use this when the stakes are high enough that you want every angle covered before building.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Starting something significant where getting it wrong costs weeks.</div>
+          <div class="skill-example">/autoplan</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/design-consultation</div>
+          <div class="skill-when">Use when: building UI from scratch</div>
+        </div>
+        <div>
+          <div class="skill-desc">Designs the full design system before you build — spacing, typography, color, component patterns. Prevents the "we'll fix the design later" trap that never gets fixed.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Starting a new UI surface with no existing design system.</div>
+          <div class="skill-example">/design-consultation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUILD -->
+  <div class="phase-section" id="build">
+    <div class="phase-header">
+      <div class="phase-icon green">🔨</div>
+      <div>
+        <div class="phase-title">Build</div>
+        <div class="phase-sub">While you're coding — systematic debugging, second opinions</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/investigate</div>
+          <div class="skill-when">Use when: something breaks</div>
+        </div>
+        <div>
+          <div class="skill-desc">Systematic 4-phase root-cause debugging. Phase 1: reproduce. Phase 2: isolate. Phase 3: identify root cause. Phase 4: fix and verify. Stops the "try random things until it works" loop that eats hours.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> A bug where the cause isn't immediately obvious. Don't guess — investigate.</div>
+          <div class="skill-example">/investigate</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/codex</div>
+          <div class="skill-when">Use when: need a second opinion</div>
+        </div>
+        <div>
+          <div class="skill-desc">Routes your question to OpenAI Codex CLI for a second AI opinion. Useful when Claude's approach feels off, or you want to see how a different model tackles the same problem.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> You're not confident in the solution and want an independent read.</div>
+          <div class="skill-example">/codex</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST -->
+  <div class="phase-section" id="test">
+    <div class="phase-header">
+      <div class="phase-icon orange">🧪</div>
+      <div>
+        <div class="phase-title">Test</div>
+        <div class="phase-sub">Before every push — QA, review, design check</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/qa</div>
+          <div class="skill-when">Use when: before every push</div>
+        </div>
+        <div>
+          <div class="skill-desc">Opens your app in a headless browser, reads the page, identifies the main user flows, and tests them systematically. Reports bugs with fixes ready. Replaces 20 minutes of manual clicking with 5 minutes of automated testing.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Before every push. Non-negotiable. The fastest bug-catcher in gstack.</div>
+          <div class="skill-example">/qa
+&gt; localhost:3000</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/qa-only</div>
+          <div class="skill-when">Use when: report only, no fixes</div>
+        </div>
+        <div>
+          <div class="skill-desc">Same as /qa but report-only — finds and lists issues without applying fixes. Use when you want to audit before deciding what to fix, or when the fixes require human judgment.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> You want to see what's broken before committing to a fix approach.</div>
+          <div class="skill-example">/qa-only</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/review</div>
+          <div class="skill-when">Use when: before opening a PR</div>
+        </div>
+        <div>
+          <div class="skill-desc">Reads the diff, checks for logic errors, missing edge cases, type safety issues, and anything a senior engineer would flag in a code review. Better than asking Claude to "review my code" — it follows a structured checklist.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> After /qa passes, before you open the PR.</div>
+          <div class="skill-example">/review</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/design-review</div>
+          <div class="skill-when">Use when: UI needs polish</div>
+        </div>
+        <div>
+          <div class="skill-desc">Visual design audit with fixes. Checks spacing, alignment, typography, color contrast, mobile responsiveness. Goes beyond "does it look good" to specific, fixable issues.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Before shipping any UI change. Especially before screenshots go in a README or launch post.</div>
+          <div class="skill-example">/design-review</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/benchmark</div>
+          <div class="skill-when">Use when: performance matters</div>
+        </div>
+        <div>
+          <div class="skill-desc">Runs performance benchmarks and compares against a baseline. Catches regressions before they reach production. Reports before/after numbers so you know exactly what changed.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Any change that touches request handling, data processing, or anything users wait on.</div>
+          <div class="skill-example">/benchmark</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHIP -->
+  <div class="phase-section" id="ship">
+    <div class="phase-header">
+      <div class="phase-icon pink">🚀</div>
+      <div>
+        <div class="phase-title">Ship</div>
+        <div class="phase-sub">Commit, PR, deploy — without the manual steps eating your afternoon</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/ship</div>
+          <div class="skill-when">Use when: ready to merge</div>
+        </div>
+        <div>
+          <div class="skill-desc">Full commit → PR → CI → merge workflow in one command. Runs tests, reads the diff, writes a PR description better than anything you'd write at 10:30am, adds labels, requests review, waits for CI, merges. 32 minutes → 11 minutes.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> /qa passes, /review passes, you're ready to ship.</div>
+          <div class="skill-example">/ship</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/land-and-deploy</div>
+          <div class="skill-when">Use when: merge + deploy together</div>
+        </div>
+        <div>
+          <div class="skill-desc">Merge and deploy in sequence, then verify the deploy succeeded. Goes further than /ship — confirms the change is live in production, not just merged to main.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> When you need to confirm production is updated, not just that the PR merged.</div>
+          <div class="skill-example">/land-and-deploy</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/document-release</div>
+          <div class="skill-when">Use when: post-ship doc updates</div>
+        </div>
+        <div>
+          <div class="skill-desc">Updates docs after shipping — README, CHANGELOG, API docs. The thing everyone says they'll do later and never does. Run it right after /ship while the context is hot.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Immediately after a feature ships. Don't let the docs fall behind.</div>
+          <div class="skill-example">/document-release</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPERATE -->
+  <div class="phase-section" id="operate">
+    <div class="phase-header">
+      <div class="phase-icon teal">🔁</div>
+      <div>
+        <div class="phase-title">Operate</div>
+        <div class="phase-sub">Keep the context alive across sessions, monitor production, reflect</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/context-save</div>
+          <div class="skill-when">Use when: end of day/week</div>
+        </div>
+        <div>
+          <div class="skill-desc">Saves full session state — what was built, decisions made, open items, next steps. Run it on Friday. Monday morning you don't re-explain anything — you restore and continue.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> End of any session where you'll need to resume. The Friday habit that changes Monday mornings.</div>
+          <div class="skill-example">/context-save</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/context-restore</div>
+          <div class="skill-when">Use when: resuming work</div>
+        </div>
+        <div>
+          <div class="skill-desc">Loads everything from the last saved session. No re-explaining. No "where were we." Full context in 2 minutes instead of 15.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Start of any session following a /context-save. First command every Monday morning.</div>
+          <div class="skill-example">/context-restore</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/canary</div>
+          <div class="skill-when">Use when: post-deploy monitoring</div>
+        </div>
+        <div>
+          <div class="skill-desc">Post-deploy monitoring loop. Watches your app after a deploy for error spikes, latency changes, or unexpected behavior. Catches production issues in minutes, not hours.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Right after /land-and-deploy. Watch the canary before you walk away from your desk.</div>
+          <div class="skill-example">/canary</div>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/retro</div>
+          <div class="skill-when">Use when: weekly reflection</div>
+        </div>
+        <div>
+          <div class="skill-desc">Structured retrospective — what shipped, what slowed you down, what to change next week. Runs at the project level or globally across all projects. Feeds learnings back into how gstack helps you.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Friday afternoon, after /context-save. 20 minutes that makes next week faster.</div>
+          <div class="skill-example">/retro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="phase-section" id="security">
+    <div class="phase-header">
+      <div class="phase-icon red">🔒</div>
+      <div>
+        <div class="phase-title">Security</div>
+        <div class="phase-sub">OWASP audit, threat modeling — before it's a problem</div>
+      </div>
+    </div>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div>
+          <div class="skill-name">/cso</div>
+          <div class="skill-when">Use when: pre-launch audit</div>
+        </div>
+        <div>
+          <div class="skill-desc">OWASP Top 10 + STRIDE threat model security audit. Reads your codebase, finds real vulnerabilities, reports them with severity and fix. Not a linter — an actual security review. Found 3 real vulns in a production app in 20 minutes.</div>
+          <div class="skill-trigger"><strong>Trigger:</strong> Before any public launch. Before handling user data. Before adding payments.</div>
+          <div class="skill-example">/cso</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Quick reference table -->
+  <h2 style="font-size:22px;font-weight:800;color:#0f0c29;margin-bottom:20px;">Quick Reference — All 23 Skills</h2>
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+      <thead>
+        <tr style="background:#0f0c29;">
+          <th style="padding:12px 16px;text-align:left;color:#a5b4fc;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Skill</th>
+          <th style="padding:12px 16px;text-align:left;color:#a5b4fc;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Phase</th>
+          <th style="padding:12px 16px;text-align:left;color:#a5b4fc;font-size:11px;letter-spacing:1px;text-transform:uppercase;">One line</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/office-hours</td><td style="padding:11px 16px;color:#64748b;">💡 Think</td><td style="padding:11px 16px;">YC-style product validation before building</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/plan-ceo-review</td><td style="padding:11px 16px;color:#64748b;">🗺 Plan</td><td style="padding:11px 16px;">Product strategy gate — what to build and why</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/plan-eng-review</td><td style="padding:11px 16px;color:#64748b;">🗺 Plan</td><td style="padding:11px 16px;">Architecture review before you write a line</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/autoplan</td><td style="padding:11px 16px;color:#64748b;">🗺 Plan</td><td style="padding:11px 16px;">Full review pipeline: CEO + design + eng + outside voice</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/design-consultation</td><td style="padding:11px 16px;color:#64748b;">🗺 Plan</td><td style="padding:11px 16px;">Build the design system before the UI</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/investigate</td><td style="padding:11px 16px;color:#64748b;">🔨 Build</td><td style="padding:11px 16px;">4-phase systematic root-cause debugging</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/codex</td><td style="padding:11px 16px;color:#64748b;">🔨 Build</td><td style="padding:11px 16px;">Second AI opinion via OpenAI Codex CLI</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/qa</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">Headless browser QA — finds bugs before every push</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/qa-only</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">QA report only — no fixes applied</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/review</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">Structured code review before PR</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/design-review</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">Visual design audit with fixes</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/plan-design-review</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">Design audit — report only</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/design-shotgun</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">Visual design exploration — multiple directions</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/benchmark</td><td style="padding:11px 16px;color:#64748b;">🧪 Test</td><td style="padding:11px 16px;">Performance regression detection</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/ship</td><td style="padding:11px 16px;color:#64748b;">🚀 Ship</td><td style="padding:11px 16px;">Commit → PR → CI → merge in one command</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/land-and-deploy</td><td style="padding:11px 16px;color:#64748b;">🚀 Ship</td><td style="padding:11px 16px;">Merge + deploy + verify production</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/document-release</td><td style="padding:11px 16px;color:#64748b;">🚀 Ship</td><td style="padding:11px 16px;">Post-ship doc updates while context is hot</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/context-save</td><td style="padding:11px 16px;color:#64748b;">🔁 Operate</td><td style="padding:11px 16px;">Save full session state for next session</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/context-restore</td><td style="padding:11px 16px;color:#64748b;">🔁 Operate</td><td style="padding:11px 16px;">Resume from saved state — full context instantly</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/canary</td><td style="padding:11px 16px;color:#64748b;">🔁 Operate</td><td style="padding:11px 16px;">Post-deploy monitoring loop</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/retro</td><td style="padding:11px 16px;color:#64748b;">🔁 Operate</td><td style="padding:11px 16px;">Weekly retrospective — what shipped, what to change</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fafeff;"><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/cso</td><td style="padding:11px 16px;color:#64748b;">🔒 Security</td><td style="padding:11px 16px;">OWASP Top 10 + STRIDE security audit</td></tr>
+        <tr><td style="padding:11px 16px;font-family:monospace;color:#4f46e5;font-weight:600;">/open-gstack-browser</td><td style="padding:11px 16px;color:#64748b;">🔨 Build</td><td style="padding:11px 16px;">Launch the gstack browser for live inspection</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider" />
+
+  <div style="background:#f0f0ff;border:1px solid #c7d2fe;border-radius:12px;padding:24px 28px;text-align:center;">
+    <div style="font-size:14px;color:#1e1b4b;margin-bottom:16px;">New to gstack? Start with the founder story tutorial — install to full workflow in one afternoon.</div>
+    <a href="/gstack-founder-story/" style="display:inline-block;background:#4f46e5;color:#fff;border-radius:8px;padding:11px 24px;font-weight:700;font-size:14px;">Read the tutorial →</a>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+</script>
+</body>
+</html>

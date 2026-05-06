@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is gstack? Garry Tan's Claude Code Skill System Explained</title>
+  <meta name="description" content="gstack is a directory of SKILL.md files that give Claude Code named, reusable workflows. Built by Garry Tan. Here's the philosophy behind it and why it works." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 17px; line-height: 1.75; color: #1a1a2e; background: #fafafa; }
+    a { color: #4f46e5; text-decoration: none; } a:hover { text-decoration: underline; }
+    #progress-bar { position: fixed; top: 0; left: 0; height: 4px; width: 0%; background: linear-gradient(90deg,#4f46e5,#7c3aed); z-index: 9999; transition: width 0.1s linear; }
+    .nav-bar { background: #fff; border-bottom: 1px solid #e0e7ff; padding: 12px 24px; position: sticky; top: 4px; z-index: 100; }
+    .nav-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .nav-back { font-size: 14px; color: #4f46e5; font-weight: 600; }
+    .hero { background: linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%); color: #fff; padding: 64px 24px 48px; text-align: center; }
+    .hero-tag { display: inline-block; background: rgba(79,70,229,0.4); color: #a5b4fc; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 18px; border: 1px solid rgba(165,180,252,0.3); }
+    .hero h1 { font-size: clamp(24px,4vw,38px); font-weight: 800; line-height: 1.25; max-width: 640px; margin: 0 auto 16px; }
+    .hero p { color: rgba(255,255,255,0.7); font-size: 16px; max-width: 500px; margin: 0 auto; }
+    .container { max-width: 760px; margin: 0 auto; padding: 52px 24px 80px; }
+    h2 { font-size: 24px; font-weight: 800; margin: 44px 0 14px; color: #0f0c29; }
+    p { margin-bottom: 18px; }
+    .callout { border-radius: 12px; padding: 22px 26px; margin: 28px 0; }
+    .callout.purple { background: #f5f3ff; border-left: 5px solid #7c3aed; }
+    .callout.green  { background: #f0fdf4; border-left: 5px solid #22c55e; }
+    .callout-label { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+    .callout.purple .callout-label { color: #6d28d9; }
+    .callout.green  .callout-label { color: #15803d; }
+    .callout p { margin: 0; font-size: 15px; }
+    code { font-family: "Menlo","Courier New",monospace; font-size: 14px; background: #f0f0ff; color: #4f46e5; padding: 2px 6px; border-radius: 4px; }
+    .code-block { background: #1e1b2e; border-radius: 12px; padding: 20px 22px; margin: 24px 0; font-family: "Menlo",monospace; font-size: 14px; color: #e2e8f0; line-height: 1.7; }
+    .code-block .cm { color: #64748b; }
+    .code-block .hl { color: #a5b4fc; }
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 40px 0; }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+    .btn-primary { background: #4f46e5; color: #fff; border-radius: 8px; padding: 12px 24px; font-weight: 700; font-size: 15px; }
+    .btn-secondary { background: #f0f0ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 8px; padding: 12px 24px; font-weight: 700; font-size: 15px; }
+    .garry-box { background: #fff; border: 1px solid #e0e7ff; border-radius: 14px; padding: 26px 28px; margin: 32px 0; display: flex; gap: 18px; align-items: flex-start; }
+    .garry-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#0f0c29,#4f46e5); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .garry-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+    .garry-title { font-size: 12px; color: #64748b; margin-bottom: 10px; }
+    .garry-quote { font-size: 15px; font-style: italic; color: #1e1b4b; line-height: 1.65; }
+  </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-back" href="/">← ranjanemail.github.io</a>
+    <span style="font-size:13px;color:#94a3b8;">What is gstack?</span>
+  </div>
+</div>
+<div class="hero">
+  <div class="hero-tag">Explainer · gstack</div>
+  <h1>What is gstack? Garry Tan's Claude Code Skill System Explained</h1>
+  <p>The one-sentence answer, the philosophy behind it, and why it changes how Claude Code actually works.</p>
+</div>
+
+<div class="container">
+
+  <h2>The one-sentence answer</h2>
+  <div class="callout purple">
+    <div class="callout-label">Definition</div>
+    <p><strong>gstack is a directory of SKILL.md files</strong> that give Claude Code named, reusable workflows — stored in <code>~/.claude/skills/</code> — that persist across every session, every project, and every machine.</p>
+  </div>
+
+  <p>When you type <code>/qa</code> in Claude Code, Claude reads <code>~/.claude/skills/qa/SKILL.md</code> and follows the workflow defined there. That file tells Claude exactly how to open your app in a headless browser, what to test, how to report bugs, and how to write fixes.</p>
+  <p>No magic. No separate API. No subscription. Just a file Claude reads and follows.</p>
+
+  <h2>What problem it solves</h2>
+  <p>Claude Code is stateless by design. Every session starts fresh. Every bug fix has to be re-explained. The third time you describe the same architecture to Claude is the moment most developers give up on getting consistent results.</p>
+  <p>The standard workaround is a <code>CLAUDE.md</code> file — project-specific instructions Claude reads at the start of each session. But <code>CLAUDE.md</code> is a flat document. It doesn't encode <em>workflows</em>. It doesn't know when to test vs when to ship vs when to stop and ask a product question.</p>
+
+  <div class="callout green">
+    <div class="callout-label">What skills add</div>
+    <p>Skills are <strong>named, invocable workflows</strong>. <code>/qa</code> doesn't just remind Claude to test — it runs a structured testing protocol with a headless browser. <code>/ship</code> doesn't just remind Claude to commit — it runs tests, reads the diff, writes the PR, waits for CI, and merges. The skill is the workflow, not a note about the workflow.</p>
+  </div>
+
+  <h2>Who built it and why</h2>
+
+  <div class="garry-box">
+    <div class="garry-avatar">GT</div>
+    <div>
+      <div class="garry-name">Garry Tan</div>
+      <div class="garry-title">President, Y Combinator · Investor in 1000+ startups</div>
+      <div class="garry-quote">"The founders shipping fastest right now aren't the ones with the best prompts. They're the ones who built systems. gstack is the system I built for myself — and then open-sourced."</div>
+    </div>
+  </div>
+
+  <p>Garry Tan built gstack as his personal Claude Code operating system while investing in and advising hundreds of startups. The insight was simple: the developers getting 10× value from Claude Code weren't prompting better — they were building repeatable systems on top of Claude's capabilities.</p>
+  <p>gstack is that system, open-sourced. It's the set of workflows Garry runs every day, packaged so any developer can install them in 10 minutes.</p>
+
+  <h2>How the file system works</h2>
+  <div class="code-block">
+<span class="cm"># gstack installs to your Claude skills directory</span>
+~/.claude/skills/
+├── qa/
+│   └── SKILL.md        <span class="cm"># /qa workflow definition</span>
+├── ship/
+│   └── SKILL.md        <span class="cm"># /ship workflow definition</span>
+├── office-hours/
+│   └── SKILL.md        <span class="cm"># /office-hours workflow definition</span>
+├── investigate/
+│   └── SKILL.md        <span class="cm"># /investigate workflow definition</span>
+└── ... (19 more skills)
+  </div>
+  <p>Claude Code checks <code>~/.claude/skills/</code> automatically. When you type <code>/qa</code>, it finds <code>qa/SKILL.md</code> and treats the contents as instructions to follow. The skill files are plain Markdown — you can read them, fork them, and write your own.</p>
+
+  <h2>The three things that make it different from prompting</h2>
+  <p><strong>1. Persistence.</strong> Prompts die with the session. Skills survive. Once gstack is installed, <code>/qa</code> is available in every Claude Code session, every project, forever.</p>
+  <p><strong>2. Structure.</strong> A skill encodes a workflow — ordered steps, decision points, outputs. A prompt encodes a request. The difference is the difference between a checklist and a sticky note.</p>
+  <p><strong>3. Composability.</strong> Skills call each other. <code>/autoplan</code> runs <code>/plan-ceo-review</code>, then <code>/plan-design-review</code>, then <code>/plan-eng-review</code>. You get a full review pipeline from one command.</p>
+
+  <h2>Is it free?</h2>
+  <p>Yes. gstack is fully open source on GitHub. No account required. No API calls to a separate service. You're paying for Claude Code (or using the free tier) and gstack runs inside it.</p>
+
+  <hr class="divider" />
+
+  <p>The best way to understand gstack is to use it. The tutorial below follows a real founder from install to a 2× output increase — every command, every result.</p>
+  <div class="cta-row">
+    <a class="btn-primary" href="/gstack-founder-story/">Read the founder story tutorial →</a>
+    <a class="btn-secondary" href="/gstack-skill-reference/">Browse all 23 skills →</a>
+  </div>
+
+</div>
+<script>
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+</script>
+</body>
+</html>
