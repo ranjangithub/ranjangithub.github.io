@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rajesh Ranjan — AI + Blockchain Builder</title>
+  <meta name="description" content="Tutorials, guides, and breakdowns on building with Claude Code, gstack, AI, and blockchain. By Rajesh Ranjan." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1a1a2e;
+      background: #fafafa;
+    }
+    a { color: #4f46e5; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      color: #fff;
+      padding: 72px 24px 56px;
+    }
+    .hero-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+      border: 3px solid rgba(165,180,252,0.4);
+    }
+    .hero-text h1 {
+      font-size: clamp(22px, 3.5vw, 32px);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .hero-text .tagline {
+      color: #a5b4fc;
+      font-size: 15px;
+      margin-bottom: 14px;
+    }
+    .hero-text .bio {
+      color: rgba(255,255,255,0.72);
+      font-size: 15px;
+      max-width: 520px;
+      line-height: 1.65;
+    }
+    .social-links {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(165,180,252,0.35);
+      color: #c7d2fe;
+      background: rgba(79,70,229,0.2);
+      transition: background 0.2s;
+    }
+    .social-btn:hover { background: rgba(79,70,229,0.4); text-decoration: none; color: #fff; }
+
+    /* Thesis bar */
+    .thesis-bar {
+      background: #ede9fe;
+      border-bottom: 1px solid #c4b5fd;
+      padding: 14px 24px;
+      text-align: center;
+      font-size: 14px;
+      color: #4c1d95;
+    }
+    .thesis-bar strong { color: #3730a3; }
+
+    /* Main content */
+    .main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 52px 24px 80px;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #6366f1;
+      margin-bottom: 20px;
+    }
+
+    /* Article cards */
+    .articles {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .article-card {
+      background: #fff;
+      border: 1px solid #e0e7ff;
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .article-card:hover {
+      border-color: #a5b4fc;
+      box-shadow: 0 4px 24px rgba(79,70,229,0.1);
+      text-decoration: none;
+    }
+    .article-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #4f46e5;
+      margin-bottom: 8px;
+    }
+    .article-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f0c29;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .article-excerpt {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .article-meta {
+      display: flex;
+      gap: 14px;
+      font-size: 12px;
+      color: #94a3b8;
+      flex-wrap: wrap;
+    }
+    .article-meta span { display: flex; align-items: center; gap: 4px; }
+    .article-arrow {
+      font-size: 22px;
+      color: #c7d2fe;
+      padding-top: 4px;
+      flex-shrink: 0;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+    .badge.new { background: #dcfce7; color: #15803d; }
+    .badge.tutorial { background: #e0e7ff; color: #3730a3; }
+
+    /* Coming soon card */
+    .coming-soon {
+      background: #f8f9ff;
+      border: 1px dashed #c7d2fe;
+      border-radius: 14px;
+      padding: 22px 24px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .coming-soon strong { color: #6366f1; display: block; margin-bottom: 4px; font-size: 15px; }
+
+    /* Newsletter bar */
+    .newsletter {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+      border-radius: 16px;
+      padding: 36px 32px;
+      margin: 52px 0;
+      color: #fff;
+      text-align: center;
+    }
+    .newsletter h2 { font-size: 20px; margin-bottom: 8px; }
+    .newsletter p { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 20px; }
+    .nl-form { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+    .nl-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 11px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(165,180,252,0.3);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 14px;
+    }
+    .nl-input::placeholder { color: rgba(255,255,255,0.4); }
+    .nl-btn {
+      padding: 11px 22px;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .nl-btn:hover { background: #4338ca; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #e2e8f0;
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 580px) {
+      .article-card { grid-template-columns: 1fr; }
+      .article-arrow { display: none; }
+      .hero-inner { flex-direction: column; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero / Profile -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="avatar">RR</div>
+      <div class="hero-text">
+        <h1>Rajesh Ranjan</h1>
+        <div class="tagline">AI + Blockchain Builder &nbsp;·&nbsp; EdTech Founder &nbsp;·&nbsp; Claude Code Power User</div>
+        <div class="bio">
+          I build tutorials and guides for solo founders and developers learning to ship faster with
+          Claude Code, gstack, AI, and blockchain. I created a 47-scene blockchain simulation
+          in 8 hours using gstack — work that would have taken 30 days part-time.
+        </div>
+        <div class="social-links">
+          <a class="social-btn" href="https://twitter.com/ranjanemail" target="_blank">𝕏 Twitter</a>
+          <a class="social-btn" href="https://linkedin.com/in/ranjanemail" target="_blank">in LinkedIn</a>
+          <a class="social-btn" href="https://github.com/ranjanemail" target="_blank">⌥ GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thesis bar -->
+  <div class="thesis-bar">
+    <strong>Thesis:</strong> AI + blockchain + vibe coding + spec-driven development = the new startup stack.
+    Most Claude Code users run at 20% of its potential. These tutorials fix that.
+  </div>
+
+  <div class="main">
+
+    <!-- Articles -->
+    <div class="section-label">Tutorials &amp; Guides</div>
+    <div class="articles">
+
+      <!-- Article 1 — live -->
+      <a class="article-card" href="/gstack-founder-story/">
+        <div>
+          <div class="article-tag">Claude Code · gstack <span class="badge new">New</span></div>
+          <div class="article-title">How a SaaS Founder Went from Claude Code Frustration to Full AI Workflow in One Afternoon</div>
+          <div class="article-excerpt">
+            Alex was shipping slower with Claude Code than without it. Every session reset to zero.
+            One Wednesday she discovered gstack — and by Friday her co-founder had noticed the difference
+            without being told. Follow her from install to a 2× output increase in four weeks.
+          </div>
+          <div class="article-meta">
+            <span>⏱ 12 min read</span>
+            <span>🛠 45 min hands-on</span>
+            <span>📅 May 2026</span>
+            <span>🆓 Free</span>
+          </div>
+        </div>
+        <div class="article-arrow">→</div>
+      </a>
+
+      <!-- Coming soon cards -->
+      <div class="coming-soon">
+        <strong>Coming next: /plan-eng-review — How to lock in architecture before building</strong>
+        The skill most developers skip. How to design the right system before writing a line of code.
+      </div>
+
+      <div class="coming-soon">
+        <strong>Coming next: /investigate — The 4-phase systematic debugging method</strong>
+        Stop guessing. This is how senior engineers diagnose bugs — now in a single Claude Code command.
+      </div>
+
+      <div class="coming-soon">
+        <strong>Coming next: I built a 47-scene blockchain tutorial in 8 hours with gstack</strong>
+        What would have taken 30 days part-time took one afternoon. Here's every command I ran.
+      </div>
+
+    </div>
+
+    <!-- Newsletter -->
+    <div class="newsletter">
+      <h2>Get the next tutorial in your inbox</h2>
+      <p>New guides on Claude Code, gstack, AI, and blockchain — no fluff, just what works.</p>
+      <div class="nl-form">
+        <input class="nl-input" type="email" placeholder="your@email.com" />
+        <button class="nl-btn">Subscribe</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 Rajesh Ranjan &nbsp;·&nbsp;
+    <a href="https://twitter.com/ranjanemail">Twitter</a> &nbsp;·&nbsp;
+    <a href="https://linkedin.com/in/ranjanemail">LinkedIn</a> &nbsp;·&nbsp;
+    <a href="https://github.com/ranjanemail">GitHub</a>
+  </footer>
+
+</body>
+</html>
