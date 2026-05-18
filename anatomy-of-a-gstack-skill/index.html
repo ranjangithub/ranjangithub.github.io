@@ -24,11 +24,14 @@
 
     .container { max-width: 800px; margin: 0 auto; padding: 52px 24px 80px; }
 
-    .tldr { background: #f0f0ff; border: 2px solid #c7d2fe; border-left: 6px solid #4f46e5; border-radius: 12px; padding: 26px 30px; margin: 40px 0; }
-    .tldr-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #4f46e5; margin-bottom: 16px; }
-    .tldr ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .tldr li { display: flex; gap: 12px; font-size: 15px; color: #1e1b4b; line-height: 1.65; align-items: flex-start; }
-    .tldr li::before { content: "✓"; color: #4f46e5; font-weight: 800; font-size: 14px; flex-shrink: 0; margin-top: 2px; line-height: 1.65; }
+    .tldr { background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 14px; padding: 28px 30px; margin: 40px 0; }
+    .tldr-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #7c3aed; margin-bottom: 20px; }
+    .tldr-items { display: flex; flex-direction: column; gap: 0; }
+    .tldr-item { display: grid; grid-template-columns: 32px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid #ede9fe; }
+    .tldr-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .tldr-item:first-child { padding-top: 0; }
+    .tldr-num { width: 24px; height: 24px; background: #4f46e5; color: #fff; border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .tldr-text { font-size: 15px; color: #1e1b4b; line-height: 1.65; }
 
     h2 { font-size: 26px; font-weight: 800; margin: 52px 0 14px; color: #0f0c29; line-height: 1.3; }
     h3 { font-size: 19px; font-weight: 700; margin: 36px 0 10px; color: #302b63; }
@@ -167,14 +170,32 @@
   <!-- TL;DR -->
   <div class="tldr">
     <div class="tldr-label">TL;DR</div>
-    <ul>
-      <li><strong>Claude Code</strong> only requires one thing: a Markdown file at <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>. The structure inside is entirely up to you.</li>
-      <li><strong>gstack</strong> adds a 5-layer convention on top of that: frontmatter, preamble, global directives, workflow steps, and telemetry. You don't need all 5 — gstack uses them because it's building production-grade, maintainable skills at scale.</li>
-      <li>The frontmatter is how Claude decides when to invoke the skill automatically — without you typing /ship.</li>
-      <li>The preamble is a bash script that runs first, giving Claude a read on your environment before it does anything.</li>
-      <li>/ship's most important design decision: an explicit list of what stops it vs what it auto-handles. That list is why 32 minutes became 11.</li>
-      <li>Once you understand the structure, writing your own skill takes 30 minutes — and you only need as many layers as your skill actually requires.</li>
-    </ul>
+    <div class="tldr-items">
+      <div class="tldr-item">
+        <span class="tldr-num">1</span>
+        <span class="tldr-text"><strong>Claude Code</strong> only requires one thing: a Markdown file at <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code>. The structure inside is entirely up to you.</span>
+      </div>
+      <div class="tldr-item">
+        <span class="tldr-num">2</span>
+        <span class="tldr-text"><strong>gstack</strong> adds a 5-layer convention on top of that: frontmatter, preamble, global directives, workflow steps, and telemetry. You don't need all 5 — gstack uses them because it's building production-grade, maintainable skills at scale.</span>
+      </div>
+      <div class="tldr-item">
+        <span class="tldr-num">3</span>
+        <span class="tldr-text">The frontmatter is how Claude decides when to invoke the skill automatically — without you typing /ship.</span>
+      </div>
+      <div class="tldr-item">
+        <span class="tldr-num">4</span>
+        <span class="tldr-text">The preamble is a bash script that runs first, giving Claude a read on your environment before it does anything.</span>
+      </div>
+      <div class="tldr-item">
+        <span class="tldr-num">5</span>
+        <span class="tldr-text">/ship's most important design decision: an explicit list of what stops it vs what it auto-handles. That list is why 32 minutes became 11.</span>
+      </div>
+      <div class="tldr-item">
+        <span class="tldr-num">6</span>
+        <span class="tldr-text">Once you understand the structure, writing your own skill takes 30 minutes — and you only need as many layers as your skill actually requires.</span>
+      </div>
+    </div>
   </div>
 
   <!-- Why /ship -->
