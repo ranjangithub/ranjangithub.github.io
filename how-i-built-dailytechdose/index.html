@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How I Built DailyTechDose — From Idea to Working AI App</title>
+  <meta name="description" content="The full build story of DailyTechDose: design thinking, architecture, tech stack, and the philosophies from Karpathy and gstack that shaped every decision." />
+  <meta property="og:title" content="How I Built DailyTechDose" />
+  <meta property="og:description" content="Design thinking, architecture, and the WHY behind every decision — a complete build story by Rajesh Ranjan." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.75;
+      color: #1a1a2e;
+      background: #fafaf7;
+    }
+    a { color: #e07b39; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0;
+      height: 4px; width: 0%;
+      background: linear-gradient(90deg, #1a3a2a, #e07b39);
+      z-index: 9999; transition: width 0.1s linear;
+    }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 96px; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #0d1f14 0%, #1a3a2a 50%, #2d5a3d 100%);
+      color: #fff; padding: 80px 24px 64px; text-align: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(224,123,57,0.3);
+      color: #f4b07a;
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 4px 16px; border-radius: 20px;
+      margin-bottom: 20px; border: 1px solid rgba(244,176,122,0.3);
+    }
+    .hero h1 {
+      font-size: clamp(26px, 4vw, 44px); font-weight: 800;
+      line-height: 1.2; max-width: 700px; margin: 0 auto 20px;
+    }
+    .hero-sub {
+      font-size: 17px; color: rgba(255,255,255,0.7);
+      max-width: 580px; margin: 0 auto 28px; line-height: 1.7;
+    }
+    .hero-meta {
+      font-size: 13px; color: rgba(255,255,255,0.5);
+      display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Reading progress ── */
+    .reading-bar {
+      background: #1a3a2a; padding: 12px 24px;
+      display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+    }
+    .reading-bar a {
+      color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.5px; text-decoration: none; transition: color 0.15s;
+    }
+    .reading-bar a:hover { color: #f4b07a; }
+
+    /* ── TL;DR ── */
+    .tldr {
+      background: #f0fdf4; border: 2px solid #bbf7d0;
+      border-left: 6px solid #1a3a2a; border-radius: 12px;
+      padding: 28px 32px; margin: 40px 0;
+    }
+    .tldr-label {
+      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      text-transform: uppercase; color: #1a3a2a; margin-bottom: 14px;
+    }
+    .tldr ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .tldr li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; color: #0d2b1a; line-height: 1.6;
+    }
+    .tldr li::before {
+      content: "✓"; color: #e07b39; font-weight: 700; font-size: 15px;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 26px; font-weight: 800;
+      margin: 56px 0 16px; color: #0d1f14; line-height: 1.3;
+      padding-top: 16px; border-top: 3px solid #e07b39;
+    }
+    h3 { font-size: 19px; font-weight: 700; margin: 36px 0 12px; color: #1a3a2a; }
+    h4 { font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: #2d5a3d; }
+    p { margin-bottom: 18px; }
+
+    /* ── Stats ── */
+    .stat-band {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px; margin: 36px 0;
+    }
+    .stat-card {
+      background: #fff; border: 1px solid #e5ddd0; border-radius: 12px;
+      padding: 20px 16px; text-align: center;
+      box-shadow: 0 2px 12px rgba(26,58,42,0.06);
+    }
+    .stat-num { font-size: 32px; font-weight: 900; color: #e07b39; line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-size: 13px; color: #6b6b6b; line-height: 1.4; }
+
+    /* ── Callout boxes ── */
+    .callout { border-radius: 10px; padding: 22px 26px; margin: 28px 0; }
+    .callout.insight { background: #fef9c3; border-left: 5px solid #eab308; }
+    .callout.insight .callout-label { color: #a16207; }
+    .callout.philosophy { background: #f0fdf4; border-left: 5px solid #1a3a2a; }
+    .callout.philosophy .callout-label { color: #1a3a2a; }
+    .callout.warning { background: #fff7ed; border-left: 5px solid #e07b39; }
+    .callout.warning .callout-label { color: #c4662c; }
+    .callout.quote { background: #f5f5f5; border-left: 5px solid #6b6b6b; }
+    .callout.quote .callout-label { color: #374151; }
+    .callout-label {
+      font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .callout p { margin: 0; font-size: 15px; line-height: 1.7; }
+    .callout blockquote { font-style: italic; color: #374151; line-height: 1.7; }
+
+    /* ── Code ── */
+    pre {
+      background: #0d1f14; color: #d4f5e3; padding: 22px 24px;
+      border-radius: 10px; overflow-x: auto; margin: 24px 0;
+      font-family: "SFMono-Regular", "Fira Code", Consolas, monospace;
+      font-size: 14px; line-height: 1.65;
+    }
+    code {
+      background: #f0ece4; padding: 2px 6px; border-radius: 4px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.87em; color: #1a3a2a;
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table { border-collapse: collapse; width: 100%; font-size: 15px; }
+    th {
+      background: #1a3a2a; color: #fff; padding: 10px 14px;
+      text-align: left; font-size: 13px; font-weight: 700;
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid #e5ddd0; }
+    tr:nth-child(even) td { background: rgba(26,58,42,0.04); }
+
+    /* ── Step cards ── */
+    .step { display: flex; gap: 20px; margin: 28px 0; }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #1a3a2a; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; flex-shrink: 0; margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-title { font-weight: 700; font-size: 17px; color: #0d1f14; margin-bottom: 8px; }
+
+    /* ── Architecture ASCII ── */
+    .ascii {
+      background: #0d1f14; color: #a7f3d0; padding: 24px;
+      border-radius: 10px; font-family: monospace; font-size: 13px;
+      line-height: 1.7; overflow-x: auto; margin: 24px 0;
+    }
+
+    /* ── Philosophy block ── */
+    .philosophy-block {
+      background: linear-gradient(135deg, #0d1f14 0%, #1a3a2a 100%);
+      color: #fff; border-radius: 12px; padding: 32px;
+      margin: 32px 0;
+    }
+    .philosophy-block h4 { color: #f4b07a; margin-top: 0; margin-bottom: 10px; }
+    .philosophy-block p { color: rgba(255,255,255,0.8); margin-bottom: 12px; font-size: 15px; }
+    .philosophy-block p:last-child { margin-bottom: 0; }
+
+    /* ── Tag pills ── */
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+    .tag {
+      background: rgba(224,123,57,0.1); color: #c4662c;
+      font-size: 12px; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; border: 1px solid rgba(224,123,57,0.25);
+    }
+
+    /* ── Bottom CTA ── */
+    .cta-box {
+      background: #1a3a2a; border-radius: 12px; padding: 40px 36px;
+      text-align: center; margin-top: 64px;
+    }
+    .cta-box h3 { color: #fff; margin-top: 0; margin-bottom: 12px; }
+    .cta-box p { color: rgba(255,255,255,0.65); font-size: 15px; margin-bottom: 24px; }
+    .cta-btn {
+      display: inline-block; background: #e07b39; color: #fff;
+      font-weight: 700; font-size: 15px; padding: 13px 28px;
+      border-radius: 6px; text-decoration: none; margin: 4px;
+    }
+    .cta-btn.secondary {
+      background: transparent; border: 2px solid rgba(255,255,255,0.3);
+    }
+    .cta-btn:hover { text-decoration: none; opacity: 0.9; }
+
+    /* ── Divider ── */
+    .divider {
+      width: 52px; height: 4px; background: #e07b39;
+      border-radius: 2px; margin: 16px 0 32px;
+    }
+
+    blockquote {
+      border-left: 4px solid #e07b39; padding: 4px 20px;
+      margin: 20px 0; color: #4b4b4b; font-style: italic;
+    }
+
+    ul, ol { padding-left: 24px; margin-bottom: 18px; }
+    li { margin-bottom: 8px; line-height: 1.7; }
+
+    @media (max-width: 600px) {
+      h2 { font-size: 21px; }
+      .hero h1 { font-size: 26px; }
+      .step { flex-direction: column; gap: 12px; }
+      .step-num { width: 32px; height: 32px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="hero-tag">Build Story · Full Tutorial</div>
+  <h1>How I Built DailyTechDose</h1>
+  <p class="hero-sub">From morning frustration to a fully automated AI briefing system — design thinking, architecture decisions, and the WHY behind every single choice.</p>
+  <div class="hero-meta">
+    <span>✍️ Rajesh Ranjan</span>
+    <span>⏱ 25-min read</span>
+    <span>🎯 Intermediate</span>
+    <span>🗓 May 2026</span>
+  </div>
+</div>
+
+<!-- ── Quick nav ── -->
+<div class="reading-bar">
+  <a href="#the-problem">The Problem</a>
+  <a href="#philosophies">Philosophies</a>
+  <a href="#design">Design Thinking</a>
+  <a href="#ux">UI/UX</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#tech-stack">Tech Stack</a>
+  <a href="#data">Data Architecture</a>
+  <a href="#build">The Build</a>
+</div>
+
+<div class="container">
+
+  <!-- TL;DR -->
+  <div class="tldr" style="margin-top: 48px;">
+    <div class="tldr-label">What you will learn</div>
+    <ul>
+      <li>How to apply Karpathy's Software 1.0/2.0/3.0 framework to a real app</li>
+      <li>Why Markdown files beat a database for AI-native apps</li>
+      <li>How to structure a curation prompt — prompt engineering as programming</li>
+      <li>The "Vault pattern" for filesystem abstraction in Next.js</li>
+      <li>How to stream Claude API responses directly to the browser (SSE)</li>
+      <li>The complete architecture: RSS → AI curation → Structured Markdown → React UI</li>
+      <li>Where vibe coding works and where you MUST read the code</li>
+    </ul>
+  </div>
+
+  <!-- ── 1. The Problem ── -->
+  <h2 id="the-problem">1. The Problem</h2>
+  <div class="divider"></div>
+
+  <p>Every morning I was doing the same inefficient ritual:</p>
+  <ol>
+    <li>Open 10–15 browser tabs — VentureBeat, Hugging Face blog, arXiv, GitHub blog...</li>
+    <li>Skim headlines for 20–30 minutes</li>
+    <li>Copy-paste anything interesting into a notes app</li>
+    <li>Struggle to turn those raw notes into LinkedIn posts or team advice</li>
+  </ol>
+
+  <p>The real problem was not a lack of information. It was the opposite. Most AI news is:</p>
+  <ul>
+    <li>Vendor press releases dressed as news</li>
+    <li>Rehashed announcements from 48 hours earlier</li>
+    <li>Articles claiming something is "revolutionary" without explaining what changed</li>
+    <li>Hype with no enterprise relevance</li>
+  </ul>
+
+  <div class="callout philosophy">
+    <div class="callout-label">The job to be done</div>
+    <p><strong>Automatically scan 30+ sources every day, filter out the noise, classify what remains, and serve it in a format I can actually use — in under 5 minutes.</strong> That is DailyTechDose.</p>
+  </div>
+
+  <div class="stat-band">
+    <div class="stat-card">
+      <div class="stat-num">30+</div>
+      <div class="stat-label">RSS Sources Scanned Daily</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Curated Signals Per Day</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">&lt;5m</div>
+      <div class="stat-label">Morning Review Time</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">$0.03</div>
+      <div class="stat-label">AI Cost Per Full Briefing</div>
+    </div>
+  </div>
+
+  <!-- ── 2. Philosophies ── -->
+  <h2 id="philosophies">2. The Philosophies That Shaped This App</h2>
+  <div class="divider"></div>
+
+  <p>Before I wrote a single line of code, three mental models shaped every decision. Without understanding them, the choices look arbitrary. With them, everything clicks into place.</p>
+
+  <div class="philosophy-block">
+    <h4>Three Frameworks</h4>
+    <p><strong>1. Karpathy's Software 1.0 / 2.0 / 3.0</strong> — the new layers of software</p>
+    <p><strong>2. Karpathy's LLM Wiki</strong> — Markdown as the native medium of AI</p>
+    <p><strong>3. gstack's Boil the Lake</strong> — completeness is cheap when AI does the work</p>
+  </div>
+
+  <h3>2.1 Karpathy's Software 1.0, 2.0, and 3.0</h3>
+  <p>In 2017, Andrej Karpathy wrote <em>Software 2.0</em>. His argument: there are now two fundamentally different ways to write software.</p>
+
+  <p><strong>Software 1.0</strong> — traditional explicit instructions. The computer executes exactly what you write. Deterministic, auditable, brittle.</p>
+  <p><strong>Software 2.0</strong> — behavior encoded in language or weights. Instead of <code>if "AI governance" in tags</code>, you write:</p>
+
+  <pre>Only include if it affects:
+- How enterprises govern AI risk
+- How AI regulations affect enterprise delivery</pre>
+
+  <p>The model generalizes. It understands "AI policy," "EU AI Act," and "algorithmic accountability" are all in scope, even though you never listed them. <strong>Software 3.0</strong> adds autonomous agents that take actions — browsing the web, writing files, making decisions.</p>
+
+  <div class="callout insight">
+    <div class="callout-label">Key insight</div>
+    <p>DailyTechDose has all three layers: deterministic file I/O and regex parsing (1.0), the curation prompt that thinks like an expert (2.0), and the Claude Code skill that runs autonomously at midnight (3.0).</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Layer</th><th>Component</th><th>What it does</th></tr>
+      <tr><td>Software 1.0</td><td><code>lib/vault.ts</code></td><td>Read/write files. Pure deterministic code.</td></tr>
+      <tr><td>Software 1.0</td><td><code>lib/signal-parser.ts</code></td><td>Regex parsing. Every rule is explicit.</td></tr>
+      <tr><td>Software 1.0</td><td>RSS fetcher (Python)</td><td>HTTP requests, XML parsing. No intelligence.</td></tr>
+      <tr><td>Software 2.0</td><td><code>data/curation-prompt.md</code></td><td>The program written in English.</td></tr>
+      <tr><td>Software 2.0</td><td>Drive Time system prompt</td><td>Style guide encoded as language.</td></tr>
+      <tr><td>Software 3.0</td><td><code>/dailytechdose</code> Claude skill</td><td>Autonomous agent runs at midnight, fetches, curates, writes.</td></tr>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-label">Critical implication</div>
+    <p>The curation prompt is the most important file. When briefing quality drops, you fix <code>data/curation-prompt.md</code> — not the code. The "source code" is natural language. This is a complete inversion of traditional software development.</p>
+  </div>
+
+  <h3>2.2 "English is the Hottest New Programming Language"</h3>
+  <p>Karpathy posted this in 2023. It is not a joke. Here is what the curation prompt looks like as TypeScript:</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+    <div>
+      <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6b6b6b;margin-bottom:8px;">Prompt (English)</p>
+      <pre style="margin:0;font-size:13px;">## Filtering Rules
+Only include if:
+- Affects SDLC
+- Enterprise AI risk
+- AI governance
+
+## Classification
+One of:
+- Strategic Signal
+- Emerging Trend
+- Governance Alert</pre>
+    </div>
+    <div>
+      <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6b6b6b;margin-bottom:8px;">Equivalent TypeScript</p>
+      <pre style="margin:0;font-size:13px;">type FilterResult =
+  "include" | "exclude";
+
+function filter(a: Article) {
+  return affects(a, "SDLC") ||
+    affects(a, "AI risk") ||
+    affects(a, "governance");
+}
+
+type Class =
+  | "Strategic Signal"
+  | "Emerging Trend"
+  | "Governance Alert";</pre>
+    </div>
+  </div>
+
+  <p>The prompt <em>is</em> a type system. It defines input types, enum values, output schema, filtering functions, error handling, and style constraints. The only difference: English handles ambiguity without a 200-entry dictionary.</p>
+
+  <h3>2.3 The LLM Wiki — Markdown as Native Medium</h3>
+  <p>LLMs were trained on the internet — mostly Markdown. GitHub READMEs, Wikipedia exports, Stack Overflow, docs sites. LLMs are natively fluent in Markdown. They expect it. Karpathy calls this pattern the "LLM Wiki" — a directory of Markdown files that an AI agent can read, understand, and update as the app's memory.</p>
+
+  <div class="ascii">data/
+├── config.md              ← "Here are my preferences and settings"
+├── curation-prompt.md     ← "Here is how you should think"
+├── sources.md             ← "Here are your data sources"
+├── topics.md              ← "Here are your interest domains"
+├── linkedin-cache.md      ← "Here is my professional context"
+└── daily/
+    ├── 2026-05-18.md      ← "Here is today's curated output"
+    └── 2026-05-18-raw.md  ← "Here is today's raw input"</div>
+
+  <p>This is not a database. It is a <strong>wiki for the AI</strong>. Every file is human-readable, human-editable, and LLM-readable with no transformation or query language.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Why Markdown over alternatives</th><th>Reason</th></tr>
+      <tr><td>vs. plain text</td><td>Hierarchical sections (<code>##</code>) are universally understood dividers — no ambiguity</td></tr>
+      <tr><td>vs. JSON</td><td>Less syntax noise; higher signal-to-noise ratio for model processing</td></tr>
+      <tr><td>vs. database</td><td>No deserialization, no ORM, no schema migration — model reads the file directly</td></tr>
+      <tr><td>Both human + AI readable</td><td>Open in VS Code Preview or Obsidian; works simultaneously for both audiences</td></tr>
+    </table>
+  </div>
+
+  <h3>2.4 Karpathy's Vibe Coding</h3>
+  <p>Vibe coding means working at the level of intent rather than implementation. You describe the outcome you want, evaluate the result, and course-correct in natural language.</p>
+
+  <blockquote>"There's a new kind of coding I call 'vibe coding', where you fully give in to the vibes, embrace exponentials, and forget that the code even exists." — Andrej Karpathy, Feb 2025</blockquote>
+
+  <p>This is how DailyTechDose was built. I described the dark terminal UI with a sidebar, 10-signal navigation, and tab bars. Claude Code built it. I iterated on what I saw.</p>
+
+  <div class="callout warning">
+    <div class="callout-label">Where vibe coding has limits</div>
+    <p>Three places in DailyTechDose where I had to stop vibing and actually read the code: (1) the SSE streaming buffer — needed to understand why <code>lines.pop()</code> preserves incomplete TCP chunks; (2) the signal parser regex — had to trace why the lazy quantifier was failing on lowercase field names; (3) the gray-matter date parsing — <code>date: 2026-05-18</code> in YAML becomes a JS <code>Date</code> object, not a string. The 80/20 rule: 80% vibe coding, 20% you must understand your tools.</p>
+  </div>
+
+  <h3>2.5 gstack's Boil the Lake</h3>
+  <p>gstack introduced the "Boil the Lake" principle: when AI makes marginal cost near-zero, "boil the ocean" tasks become achievable lakes.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Feature</th><th>The "Reasonable" version</th><th>Boil the Lake version</th></tr>
+      <tr><td>Signal analysis</td><td>3 top stories, 2 sentences</td><td>10 signals, 11 structured fields each</td></tr>
+      <tr><td>Drive Time scripts</td><td>1 script for biggest story</td><td>5 full scripts, pre-generated, ready instantly</td></tr>
+      <tr><td>LinkedIn drafts</td><td>"Here are some post ideas"</td><td>10 complete drafted posts, hook + argument + hashtags</td></tr>
+      <tr><td>Signal classification</td><td>Unclassified</td><td>Every signal: Strategic / Emerging / Tactical / Governance / Hype</td></tr>
+    </table>
+  </div>
+
+  <p>The cost: <strong>$0.03 per full briefing.</strong> The marginal cost of the 11th signal is essentially zero. So the app generates everything, every day, at full depth.</p>
+
+  <!-- ── 3. Design Thinking ── -->
+  <h2 id="design">3. Design Thinking</h2>
+  <div class="divider"></div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Who is the user?</div>
+      <p>Just me. This is a personal tool. That is a <strong>liberating constraint</strong> — no onboarding, no multi-user auth, no billing, no public API. I optimize entirely for one power user.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">What are the jobs to be done?</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Job</th><th>When</th><th>Context</th></tr>
+          <tr><td>Morning briefing</td><td>7 AM, coffee in hand</td><td>Scan 10 signals, understand what changed overnight</td></tr>
+          <tr><td>Content creation</td><td>Before LinkedIn posting</td><td>Need a draft post, not a blank page</td></tr>
+          <tr><td>Commute listening</td><td>Driving to work</td><td>Think out loud about one topic, radio-style</td></tr>
+        </table>
+      </div>
+      <p>Three distinct jobs → three distinct UI surfaces: Briefing, Social Media, Drive Time, Marp Studio.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">What does success look like? (Defined before writing code)</div>
+      <ul>
+        <li>I spend <strong>under 5 minutes</strong> on the briefing each morning (vs. 30+ before)</li>
+        <li>I post on LinkedIn <strong>at least 3x per week</strong> without struggling for content</li>
+        <li>The briefing correctly filters out adult content and pure hype <strong>automatically</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title">What should NOT be in the app?</div>
+      <p>Saying NO defines the product more than saying YES.</p>
+      <ul>
+        <li>No user accounts — it is just me</li>
+        <li>No general-purpose news reader — must be opinionated about AI, SDLC, governance</li>
+        <li>No database — Markdown files are the database</li>
+        <li>No public-facing website — runs on localhost:3001, private to my machine</li>
+        <li>No social media posting API — I copy-paste (forces me to review before posting)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── 4. UI/UX ── -->
+  <h2 id="ux">4. UI/UX Thinking</h2>
+  <div class="divider"></div>
+
+  <h3>The Dark Terminal Aesthetic — and Why</h3>
+  <p>Most news readers look like Medium: white background, serif fonts, article cards. I chose the opposite: dark zinc background, monospace fonts, terminal-style UI.</p>
+  <ul>
+    <li><strong>Cognitive signaling:</strong> when I open this app, my brain shifts to "analytical mode." The same reason Bloomberg terminals look the way they do.</li>
+    <li><strong>Built for me:</strong> I spend 8+ hours a day in VS Code with a dark theme. This feels like home.</li>
+    <li><strong>Information density:</strong> dark backgrounds allow more content per screen. I see 10 signal titles in the sidebar without scrolling.</li>
+  </ul>
+
+  <h3>The Sidebar + Main Panel Layout</h3>
+
+  <div class="ascii">┌─────────────────────────────────────────────────┐
+│ ⚡ DailyTechDose         [Briefing] [Drive Time] │  NavBar: 53px
+├──────────┬──────────────────────────────────────┤
+│ Archives │                                       │
+│ 2026-05-18 ●                                    │
+│ 2026-05-17   │   Signal 3 / 10                  │  Sidebar: 208px
+│           │   The EU AI Act enforcement...       │
+│ Signals   │                                      │  Main: flex-1
+│ 1. OpenAI │   [What happened]                    │
+│ 2. Claude │   [Why it matters]                   │
+│ 3. EU AI  │                                      │
+│ ...       │        ← Prev    Next →              │
+└──────────┴──────────────────────────────────────┘</div>
+
+  <div class="callout insight">
+    <div class="callout-label">Key UX decision</div>
+    <p>The height is <code>calc(100vh - 53px)</code>. The app always fits exactly in the viewport. No page scrolling — everything is internal scrolling inside the sidebar and main panel. This makes it feel like a native application, not a webpage.</p>
+  </div>
+
+  <h3>Color Coding the Category Tabs</h3>
+  <p>Each tab has a distinct color that stays consistent across the app. This is not decoration — it is <strong>semantic coloring</strong>. After a week of use, your eyes know where to look without reading the label.</p>
+  <ul>
+    <li>Amber/yellow → Quick Hits (fast-moving, time-sensitive)</li>
+    <li>Violet → Research (academic, deep)</li>
+    <li>Red → Governance Watch (alerts, risks)</li>
+    <li>Cyan → Agentic SDLC (my specialty)</li>
+    <li>Orange → Architecture</li>
+    <li>Emerald → For Builders (actionable)</li>
+    <li>Blue → LinkedIn (matches LinkedIn's brand)</li>
+  </ul>
+
+  <!-- ── 5. Requirements → Tasks ── -->
+  <h2 id="requirements">5. Requirements → Spec → Plan → Tasks</h2>
+  <div class="divider"></div>
+
+  <h3>Step 1: Plain English Requirements</h3>
+  <pre>MUST HAVE:
+- Fetch articles from 30+ RSS feeds daily
+- Use Claude to curate and classify the top 10 signals
+- Display in sidebar+panel layout with Prev/Next navigation
+- Archive: show past briefings
+- Runs automatically at midnight — no manual steps
+
+SHOULD HAVE:
+- LinkedIn post drafts generated from signals
+- AI radio scripts for Drive Time commute
+
+NICE TO HAVE:
+- Marp slide deck generator
+- Executive summary strip</pre>
+
+  <h3>Step 2: Functional Spec</h3>
+  <p>A functional spec answers: <em>"What does each feature do, precisely?"</em></p>
+  <p><strong>Daily Briefing:</strong> At midnight, a script fetches RSS → writes raw articles to <code>data/daily/YYYY-MM-DD-raw.md</code>. Claude Code reads the raw file + curation prompt → generates structured briefing → writes to <code>data/daily/YYYY-MM-DD.md</code>. The web app reads the file, parses Signal 1–10, displays one at a time with Prev/Next.</p>
+  <p><strong>Drive Time:</strong> The briefing includes pre-generated scripts for the top 5 signals. The app extracts these immediately (no API call). If the user wants a fresh script, they click "Generate" → live streaming from Claude API.</p>
+  <p><strong>Marp Studio:</strong> User picks a signal + visual template. The app generates Marp Markdown entirely in the browser — no API call. User copies to clipboard or downloads the <code>.md</code> file, opens in VS Code with Marp extension.</p>
+
+  <h3>Step 3: Technical Plan (in dependency order)</h3>
+  <ol>
+    <li>Scaffold Next.js project with Tailwind</li>
+    <li>Create <code>data/</code> directory structure</li>
+    <li>Write <code>vault.ts</code> — filesystem read/write abstraction</li>
+    <li>Write <code>signal-parser.ts</code> — parse structured fields from briefing Markdown</li>
+    <li>Write <code>/api/digest</code> route — serve daily briefing content</li>
+    <li>Write <code>/api/signals</code> route — serve parsed signal objects</li>
+    <li>Write <code>/api/drivetime</code> route — GET pre-generated scripts, POST streams from Claude</li>
+    <li>Build Briefing page, Drive Time page, Social Media page, Marp Studio page</li>
+    <li>Write <code>data/curation-prompt.md</code> — the most important step</li>
+    <li>Set up RSS sources in <code>data/sources.md</code></li>
+    <li>Write <code>run-nightly.sh</code> — scheduled automation</li>
+    <li>Wire up Claude Code skill (<code>/dailytechdose</code>)</li>
+  </ol>
+
+  <!-- ── 6. Tech Stack ── -->
+  <h2 id="tech-stack">6. Tech Stack — Every Decision Explained</h2>
+  <div class="divider"></div>
+
+  <div class="step">
+    <div class="step-num" style="background:#e07b39;">N</div>
+    <div class="step-body">
+      <div class="step-title">Next.js 15 (App Router)</div>
+      <p><strong>Why Next.js instead of plain React?</strong> Plain React is just a UI library — no server, no routing, no API routes. I needed an API layer to read files from disk. Next.js gives both frontend and backend in one project.</p>
+      <p><strong>Why App Router?</strong> Supports React Server Components, which can read files on disk at render time without an API route. App Router is the future; Pages Router is being deprecated.</p>
+      <p><strong>Why <code>"use client"</code> on nearly all pages?</strong> The browser IS the application. All interactivity is client-side. The server only reads Markdown files from disk and returns JSON. So almost everything is a Client Component with <code>useState</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#0ea5e9;">TS</div>
+    <div class="step-body">
+      <div class="step-title">TypeScript — non-negotiable</div>
+      <p>Data flows from Markdown text → parsed objects → React components → UI. Without types, it is easy to pass <code>signal.whatHappened</code> where <code>signal.myTake</code> was expected — two different fields that are both strings. The <code>ParsedSignal</code> interface in <code>lib/signal-parser.ts</code> acts as a contract. Mistakes get caught at compile time, not runtime.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#6366f1;">TW</div>
+    <div class="step-body">
+      <div class="step-title">Tailwind CSS v4</div>
+      <p>I never leave my JSX file to write styles. The zinc color palette is pre-built and looks professional with a slightly cool blue-gray tone — exactly right for a dark terminal UI. Pure black (<code>#000</code>) looks harsh; zinc-950 has texture.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#1a3a2a;">gm</div>
+    <div class="step-body">
+      <div class="step-title">gray-matter — YAML frontmatter parser</div>
+      <p>Every briefing file has metadata at the top (date, article count) and content below. gray-matter splits these cleanly. Key trap: unquoted YAML dates like <code>date: 2026-05-18</code> get parsed as JavaScript <code>Date</code> objects, not strings. Fix:</p>
+      <pre>date: data.date instanceof Date
+  ? data.date.toISOString().split("T")[0]
+  : String(data.date)</pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#e07b39;">API</div>
+    <div class="step-body">
+      <div class="step-title">Anthropic API — direct fetch, not the SDK</div>
+      <p>For Drive Time streaming, I needed to pipe the API's streaming response directly to the browser as a <code>ReadableStream</code>. The raw API returns Server-Sent Events (SSE) which I can proxy as-is. Using the SDK adds an abstraction layer that makes streaming harder to control. The raw approach is only 30 lines of code.</p>
+      <pre>// 1. POST to api.anthropic.com with stream: true
+// 2. Get back a ReadableStream
+// 3. Parse SSE lines, extract delta.text
+// 4. Return that stream as the HTTP response
+// Browser reads word-by-word, appends in real time</pre>
+    </div>
+  </div>
+
+  <!-- ── 7. Data Architecture ── -->
+  <h2 id="data">7. Data Architecture — The "No Database" Choice</h2>
+  <div class="divider"></div>
+
+  <p>This is the most unconventional decision in the project, and the one I am most proud of.</p>
+
+  <h3>Why Markdown Files Instead of a Database</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Reason</th><th>Explanation</th></tr>
+      <tr><td>AI writes Markdown natively</td><td>Claude returns Markdown. Files store it directly — zero transformation step</td></tr>
+      <tr><td>Version control</td><td><code>git diff data/daily/2026-05-18.md</code> shows exactly what changed. No dump-and-restore</td></tr>
+      <tr><td>Human readability</td><td>Open any briefing in VS Code. Edit it. If AI wrote something wrong, fix it in place</td></tr>
+      <tr><td>Zero infrastructure</td><td>No database server, connection string, ORM, or migrations</td></tr>
+      <tr><td>Scale is trivial</td><td>One user, one file per day. 365 files × 50KB = 18MB after a year</td></tr>
+    </table>
+  </div>
+
+  <h3>The Vault Pattern</h3>
+  <p><code>lib/vault.ts</code> is the single point of access to the filesystem. No component or API route reads files directly — they all go through the vault.</p>
+
+  <pre>// lib/vault.ts — the complete data layer
+
+export function readDailyDigest(date: string): string | null {
+  const filepath = path.join(DATA_DIR, "daily", `${date}.md`);
+  if (!fs.existsSync(filepath)) return null;  // null, not throw
+  const raw = fs.readFileSync(filepath, "utf-8");
+  return matter(raw).content;  // strip frontmatter, return content
+}
+
+export function listDailyDigests(): string[] {
+  return fs.readdirSync(dir)
+    .filter(f => f.endsWith(".md") && !f.endsWith("-raw.md"))
+    .sort()
+    .reverse();  // most recent first
+}</pre>
+
+  <div class="callout insight">
+    <div class="callout-label">Why return null instead of throwing?</div>
+    <p>"No briefing for this date" is a normal state, not an error. If I threw, the API returns 500 and the UI handles an error state. By returning null, the API returns <code>{"digest": null}</code>, and the UI shows "No briefing today. Run /dailytechdose to generate one." Better UX, simpler code.</p>
+  </div>
+
+  <p><strong>Why abstract behind a vault?</strong> If I ever decide to move to a database, I only change <code>vault.ts</code>. Every API route that calls <code>readDailyDigest()</code> works without modification. This is the Repository Pattern.</p>
+
+  <!-- ── 8. The Build ── -->
+  <h2 id="build">8. The Build — Key Steps Explained</h2>
+  <div class="divider"></div>
+
+  <h3>Step 1: Scaffold</h3>
+  <pre>npx create-next-app@latest dailytechdose \
+  --typescript \
+  --tailwind \
+  --app \
+  --no-src-dir \
+  --import-alias "@/*"</pre>
+  <p><code>--import-alias "@/*"</code> allows <code>import { vault } from "@/lib/vault"</code> instead of <code>"../../lib/vault"</code>. Small thing, huge readability win.</p>
+
+  <h3>Step 2: The Curation Prompt (the most important step)</h3>
+  <p><code>data/curation-prompt.md</code> is the program written in English. Its key sections:</p>
+
+  <div class="step">
+    <div class="step-num" style="background:#1a3a2a;font-size:12px;">INT</div>
+    <div class="step-body">
+      <div class="step-title">My Interests</div>
+      <p>Tells the AI specifically what domains matter: Generative AI, Agentic AI, Claude Code, Responsible AI governance, NIST AI RMF, EU AI Act, OWASP LLM Top 10, RAG, AI evals. Without this, you get generic AI news.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#ef4444;font-size:12px;">GRD</div>
+    <div class="step-body">
+      <div class="step-title">Content Guardrails</div>
+      <p>RSS feeds aggregate everything. Without an explicit "always exclude adult content" rule, explicit content from AI incidents would appear. This section prevents that.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#eab308;font-size:12px;">FLT</div>
+    <div class="step-body">
+      <div class="step-title">Filtering Rules</div>
+      <p>The core filter. Most AI news fails this. A celebrity chatbot story: fails — not SDLC-relevant. A new paper on LLM code generation: passes — directly relevant to how AI changes software development.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:#e07b39;font-size:12px;">OUT</div>
+    <div class="step-body">
+      <div class="step-title">Output Format — the structural contract</div>
+      <pre style="font-size:13px;">### Signal N: [Headline]
+
+**What happened:**
+**Why it matters:**
+**Enterprise SDLC impact:**
+**Responsible AI / governance impact:**
+**Architecture impact:**
+**My take:**
+**LinkedIn angle:**
+**Hook:**</pre>
+      <p>The <strong>Hook</strong> field is particularly important: one strong opening sentence for a LinkedIn post. LinkedIn posts live or die on the first line. Having this pre-written means I start from strength, not a blank page.</p>
+    </div>
+  </div>
+
+  <h3>Step 3: The Signal Parser</h3>
+  <p><code>lib/signal-parser.ts</code> turns the structured Markdown into typed TypeScript objects that React components can use.</p>
+
+  <pre>// The ParsedSignal interface — the contract between data and UI
+interface ParsedSignal {
+  number: number;
+  title: string;
+  whatHappened: string;
+  whyItMatters: string;
+  sdlcImpact: string;
+  responsibleAiImpact: string;
+  architectureImpact: string;
+  myTake: string;
+  linkedinAngle: string;
+  hook: string;
+}</pre>
+
+  <p>The parser uses regex to find each field. The tricky part: the regex must handle the model's natural language output, which is slightly different every day. The key pattern:</p>
+
+  <pre>const regex = new RegExp(
+  `\\*\\*${escaped}[^*]*\\*\\*\\s*:?\\s*\\n([\\s\\S]*?)(?=\\n\\*\\*[A-Z]|\\n---\\n?|$)`,
+  "i"
+);</pre>
+
+  <div class="callout warning">
+    <div class="callout-label">Debugging moment: out of vibe coding</div>
+    <p>When this regex returned empty strings for some fields, I could not debug by describing the symptom. I had to run the regex against a sample briefing in a REPL, understand what the lazy <code>*?</code> quantifier does vs. greedy <code>*</code>, and trace why the lookahead <code>(?=\\n\\*\\*[A-Z])</code> was failing on lowercase field names.</p>
+  </div>
+
+  <h3>Step 4: The Streaming API Route</h3>
+  <p>The Drive Time tab allows generating a fresh script for any signal with live streaming output. The API route:</p>
+
+  <pre>// app/api/drivetime/route.ts
+export async function POST(req: Request) {
+  const { signal } = await req.json();
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": process.env.ANTHROPIC_API_KEY!,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-opus-4-5",
+      max_tokens: 1024,
+      stream: true,
+      messages: [{ role: "user", content: buildDriveTimePrompt(signal) }],
+    }),
+  });
+
+  // Pipe the SSE stream directly to the browser
+  return new Response(
+    new ReadableStream({
+      async start(controller) {
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";  // ← preserve incomplete line
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            const data = line.slice(6);
+            if (data === "[DONE]") { controller.close(); return; }
+            try {
+              const parsed = JSON.parse(data);
+              const text = parsed.delta?.text ?? "";
+              if (text) controller.enqueue(new TextEncoder().encode(text));
+            } catch { /* partial JSON — wait for next chunk */ }
+          }
+        }
+      }
+    }),
+    { headers: { "Content-Type": "text/plain; charset=utf-8" } }
+  );
+}</pre>
+
+  <div class="callout insight">
+    <div class="callout-label">Why <code>buffer = lines.pop() ?? ""</code>?</div>
+    <p>TCP packets can split mid-line. An SSE event might arrive as "data: {\"type\":\"cont" in one chunk and "ent_block_delta..." in the next. <code>pop()</code> removes the last (incomplete) line from the array and saves it to buffer for the next chunk. Without this, you get JSON parse errors on every split packet.</p>
+  </div>
+
+  <h3>Step 5: The Nightly Automation</h3>
+  <p>The Claude Code skill (<code>/dailytechdose</code>) runs the full pipeline autonomously. A shell script triggers it at midnight:</p>
+
+  <pre>#!/bin/bash
+# run-nightly.sh — scheduled via launchd (macOS) or cron (Linux)
+cd /path/to/dailytechdose
+
+# Step 1: Fetch RSS articles (Python script)
+python3 scripts/fetch-rss.py
+
+# Step 2: Run Claude Code skill to generate briefing
+claude -p "/dailytechdose" --output-format stream-json 2>&1 \
+  >> logs/nightly-$(date +%Y-%m-%d).log
+
+echo "Briefing generated: $(date)" >> logs/nightly.log</pre>
+
+  <p>On macOS, use launchd with a plist file to schedule at midnight. On Linux, use cron: <code>0 0 * * * /path/to/run-nightly.sh</code>.</p>
+
+  <!-- ── Architecture Summary ── -->
+  <h2>9. The Full Architecture</h2>
+  <div class="divider"></div>
+
+  <div class="ascii">                     THE DAILYTECHDOSE STACK
+═══════════════════════════════════════════════════════════
+
+  MIDNIGHT AUTOMATION
+  ┌──────────────────────────────────────────────────────┐
+  │  RSS Fetcher (Python)  →  data/daily/DATE-raw.md     │  Software 1.0
+  │  Claude Code Skill     →  reads raw + curation prompt │
+  │  Claude claude-opus-4-5→  generates full briefing     │  Software 2.0
+  │  vault.writeDigest()   →  data/daily/DATE.md         │  Software 1.0
+  └──────────────────────────────────────────────────────┘
+
+  DATA LAYER (Markdown files — no database)
+  ┌─────────────────────┐
+  │  data/curation-prompt.md   ← The program in English  │
+  │  data/sources.md           ← 30+ RSS feed URLs       │
+  │  data/daily/DATE.md        ← Today's briefing        │
+  └─────────────────────┘
+            │  lib/vault.ts (repository pattern)
+            ▼
+  API LAYER (Next.js Route Handlers)
+  ┌─────────────────────┐
+  │  /api/digest        → reads vault, returns briefing  │
+  │  /api/signals       → reads vault, parses signals    │
+  │  /api/drivetime     → streams from Claude API        │
+  └─────────────────────┘
+            │
+            ▼
+  UI LAYER (Next.js App Router, "use client")
+  ┌─────────────────────┐
+  │  app/page.tsx       → Briefing: sidebar + signals    │
+  │  app/drivetime/     → Streaming radio scripts        │
+  │  app/social/        → LinkedIn post drafts           │
+  │  app/marp/          → Slide deck generator           │
+  └─────────────────────┘</div>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="cta-box">
+    <h3>Build your own intelligence system</h3>
+    <p>The full source code, curation prompt template, and the Claude Code skill are all open to study. The most important file is not the code — it is <code>data/curation-prompt.md</code>. Start there.</p>
+    <a href="https://rajeshranjan.vercel.app/daily" class="cta-btn">See DailyTechDose Live →</a>
+    <a href="https://rajeshranjan.vercel.app/tutorials" class="cta-btn secondary">More Tutorials →</a>
+  </div>
+
+  <div class="tags" style="margin-top: 48px;">
+    <span class="tag">#AgenticAI</span>
+    <span class="tag">#ClaudeCode</span>
+    <span class="tag">#NextJS</span>
+    <span class="tag">#LLMWiki</span>
+    <span class="tag">#gstack</span>
+    <span class="tag">#Karpathy</span>
+    <span class="tag">#ResponsibleAI</span>
+    <span class="tag">#VibeCoding</span>
+    <span class="tag">#BoilTheLake</span>
+    <span class="tag">#AIArchitecture</span>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener("scroll", () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById("progress-bar").style.width = scrolled + "%";
+  });
+</script>
+</body>
+</html>
